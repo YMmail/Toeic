@@ -104,12 +104,14 @@ h2{margin:0;font-size:18px}
   <header>
     <div class="eyebrow">Reading · Part 5 · Incomplete Sentences</div>
     <h1>ฝึกทำข้อสอบ TOEIC Part 5</h1>
-    <p class="sub">30 ข้อ (101–130) เหมือนข้อสอบจริง เป้าหมายคือข้อละไม่เกิน 20 วินาที ตอบแล้วจะเห็นเฉลยและวิธีคิดทันที</p>
+    <p class="sub">ชุดละ 30 ข้อ (101–130) เหมือนข้อสอบจริง เป้าหมายคือข้อละไม่เกิน 20 วินาที ตอบแล้วจะเห็นเฉลยและวิธีคิดทันที</p>
   </header>
 
-  <div class="tabs" role="group" aria-label="เลือกหมวด">
-    <button class="chip" data-filter="all" aria-pressed="true" id="f-all">ทุกหมวด</button>
+  <div class="tabs sets" role="group" aria-label="เลือกชุด">
+    <button class="chip" data-set="s1" aria-pressed="true" id="set-1">ชุดที่ 1 · รวมทุกเรื่อง</button>
+    <button class="chip" data-set="s2" aria-pressed="false" id="set-2">ชุดที่ 2 · เน้นจุดอ่อน</button>
   </div>
+  <div class="tabs cats-filter" role="group" aria-label="เลือกหมวด"></div>
 
   <div class="bar">
     <span id="pos">101 / 130</span>
@@ -154,7 +156,7 @@ const CATS = {
 };
 
 // a = index of correct answer. clue = what to look at. why = explanation. traps = why other options are wrong.
-const Q = [
+const Q1 = [
  {c:"form", s:"The new software has significantly improved the ___ of our customer service team.",
   o:["efficient","efficiently","efficiency","more efficient"], a:2,
   clue:"<b>the ___ of</b> → ตรงกลางระหว่าง the กับ of ต้องเป็นคำนาม",
@@ -249,11 +251,6 @@ const Q = [
   clue:"<b>by + -self</b> = ด้วยตัวเอง",
   why:"by themselves = ทำเองโดยไม่มีคนช่วย",
   traps:["by them แปลว่า 'โดยพวกเขา' ในความหมาย passive ไม่ใช่ความหมายนี้"]},
- {c:"pron", s:"Ms. Patel and ___ assistant will attend the trade fair in Singapore.",
-  o:["she","her","hers","herself"], a:1,
-  clue:"<b>___ + นาม (assistant)</b> → ต้องใช้คำแสดงความเป็นเจ้าของ",
-  why:"her assistant = ผู้ช่วยของเธอ",
-  traps:["hers ใช้แทนทั้งนามและไม่มีนามตามหลัง เช่น The bag is hers"]},
  {c:"pron", s:"The candidate ___ résumé impressed the committee will be interviewed tomorrow.",
   o:["who","whom","whose","which"], a:2,
   clue:"<b>คน + ___ + นาม (résumé)</b> → whose",
@@ -319,29 +316,199 @@ const Q = [
   traps:["follow / obey / observe ตามด้วยกรรมได้เลย ไม่ต้องมี with"]},
 ];
 
-const N = Q.length, START = 101, TARGET = 20;
-const state = {i:0, ans:Array(N).fill(null), filter:"all", t0:Date.now(), qStart:Date.now(), qTime:Array(N).fill(0)};
+// Set 2: weighted toward word form, vocabulary, tense/agreement, prepositions and comparison
+const Q2 = [
+ {c:"form", s:"The ___ of the new factory will create about 300 jobs in the area.",
+  o:["construct","constructive","construction","constructively"], a:2,
+  clue:"<b>The ___ of</b> → ระหว่าง the กับ of ต้องเป็นคำนาม",
+  why:"construction (n.) = การก่อสร้าง",
+  traps:["คำลงท้าย -tion, -ment, -ness, -ity, -ance มักเป็นคำนาม","constructive เป็น adj (สร้างสรรค์)"]},
+ {c:"form", s:"Our sales representatives respond ___ to all customer inquiries.",
+  o:["prompt","promptly","promptness","prompted"], a:1,
+  clue:"<b>respond ___ to</b> → หลังกริยา respond (ไม่ต้องมีกรรม) ใช้ adverb ขยาย",
+  why:"promptly = อย่างรวดเร็ว ขยายกริยา respond",
+  traps:["respond เป็นกริยาที่ไม่มีกรรม ช่องว่างจึงไม่ใช่คำนาม"]},
+ {c:"form", s:"The hotel staff were extremely ___ throughout our stay.",
+  o:["help","helpful","helpfully","helpfulness"], a:1,
+  clue:"<b>were extremely ___</b> → be + adv + ___ ต้องเป็น adjective",
+  why:"helpful (adj.) = ช่วยเหลือดี",
+  traps:["รูปแบบเดียวกับข้อ 104 ในชุดที่ 1 (was highly successful) จำไว้: be + very/highly/extremely + adj"]},
+ {c:"form", s:"Ms. Wong gave an ___ presentation on current market trends.",
+  o:["inform","informative","information","informatively"], a:1,
+  clue:"<b>an ___ presentation</b> → ระหว่าง a/an กับคำนาม ต้องเป็น adjective",
+  why:"informative (adj.) = ให้ความรู้ ขยายคำนาม presentation",
+  traps:["คำลงท้าย -ive, -ful, -ous, -able, -al มักเป็น adj"]},
+ {c:"form", s:"Please make sure all ___ are signed before the meeting begins.",
+  o:["agree","agreeable","agreements","agreeably"], a:2,
+  clue:"<b>all ___ are signed</b> → หลัง all เป็นประธาน ต้องเป็นคำนาม และกริยา are บอกว่าเป็นพหูพจน์",
+  why:"agreements = ข้อตกลง/สัญญา",
+  traps:["agreeable เป็น adj (น่าพอใจ)"]},
+ {c:"form", s:"The company has ___ expanded its operations in Southeast Asia.",
+  o:["rapid","rapidly","rapidity","more rapid"], a:1,
+  clue:"<b>has ___ expanded</b> → ระหว่าง have/has กับ V3 ใช้ adverb",
+  why:"rapidly = อย่างรวดเร็ว",
+  traps:["ตำแหน่งนี้ออกบ่อยมาก: has + adv + V3, will + adv + V, is + adv + V-ing"]},
+ {c:"form", s:"Mr. Davis is ___ for organizing the annual sales conference.",
+  o:["responsible","responsibly","responsibility","responsibilities"], a:0,
+  clue:"<b>is ___ for</b> → be responsible for = รับผิดชอบ",
+  why:"หลัง be ต้องการ adj ซึ่งคือ responsible",
+  traps:["responsibility เป็นนาม ใช้แบบ have responsibility for"]},
+ {c:"form", s:"Customer ___ has increased since we launched the new mobile app.",
+  o:["satisfy","satisfied","satisfying","satisfaction"], a:3,
+  clue:"<b>Customer ___ has increased</b> → ช่องว่างเป็นประธาน ต้องเป็นคำนาม (customer satisfaction เป็นนามคู่)",
+  why:"customer satisfaction = ความพึงพอใจของลูกค้า",
+  traps:["นามคู่ที่เจอบ่อย: customer satisfaction, sales representative, safety regulations, job opening"]},
+ {c:"form", s:"The new product manual is written so ___ that anyone can follow it.",
+  o:["clear","clearly","clarity","clearness"], a:1,
+  clue:"<b>is written so ___</b> → ขยายกริยา written ใช้ adverb",
+  why:"so clearly that ... = ชัดเจนมากจนกระทั่ง",
+  traps:["ถ้าเป็น The manual is so clear that ... จะใช้ adj เพราะตามหลัง be ตรงๆ"]},
+
+ {c:"vocab", s:"Please ___ the attached document for details about the schedule.",
+  o:["consult","refer","look","depend"], a:0,
+  clue:"<b>___ the document</b> ไม่มีคำบุพบทคั่น → ต้องเป็นกริยาที่มีกรรมได้เลย",
+  why:"consult = ดู/ปรึกษา (เอกสาร ผู้เชี่ยวชาญ)",
+  traps:["refer ต้องเป็น refer to, look ต้องเป็น look at, depend ต้องเป็น depend on"]},
+ {c:"vocab", s:"The position requires a minimum of five years of ___ experience.",
+  o:["relevant","relative","reliable","respective"], a:0,
+  clue:"<b>relevant experience</b> = ประสบการณ์ที่เกี่ยวข้อง",
+  why:"เจอบ่อยในประกาศรับสมัครงาน (Part 7 ด้วย)",
+  traps:["relative = สัมพัทธ์/ญาติ, reliable = เชื่อถือได้, respective = ของแต่ละคน"]},
+ {c:"vocab", s:"All employees are ___ to attend the safety training session.",
+  o:["required","insisted","demanded","suggested"], a:0,
+  clue:"<b>be required to + V</b> = ถูกกำหนดให้ต้องทำ",
+  why:"พนักงานทุกคนต้องเข้าอบรม",
+  traps:["insist ใช้ insist on, suggest ไม่ใช้รูป be suggested to + V กับคน"]},
+ {c:"vocab", s:"The store offers a full ___ if the item is returned within 30 days.",
+  o:["refund","discount","charge","receipt"], a:0,
+  clue:"<b>returned</b> → ของที่คืนได้ <b>refund</b> = เงินคืน",
+  why:"full refund = คืนเงินเต็มจำนวน",
+  traps:["discount = ส่วนลด, charge = ค่าธรรมเนียม, receipt = ใบเสร็จ"]},
+ {c:"vocab", s:"Due to unforeseen circumstances, the meeting has been ___ until next week.",
+  o:["postponed","canceled","extended","reduced"], a:0,
+  clue:"<b>___ until next week</b> → เลื่อนออกไปถึงสัปดาห์หน้า",
+  why:"postpone = เลื่อนออกไป",
+  traps:["canceled = ยกเลิก จึงไม่เข้ากับ until next week"]},
+ {c:"vocab", s:"The company plans to ___ 50 new employees this year.",
+  o:["hire","apply","retire","resign"], a:0,
+  clue:"<b>___ employees</b> → บริษัททำกับพนักงาน = จ้าง",
+  why:"hire = จ้าง",
+  traps:["apply (for) = สมัคร เป็นสิ่งที่ผู้สมัครทำ","retire = เกษียณ, resign = ลาออก"]},
+ {c:"vocab", s:"All luggage must be checked in at least two hours ___ to departure.",
+  o:["prior","before","ahead","early"], a:0,
+  clue:"<b>___ to</b> → prior to = ก่อน",
+  why:"prior to departure = ก่อนออกเดินทาง",
+  traps:["before ใช้ได้ แต่ต้องไม่มี to (before departure)"]},
+ {c:"vocab", s:"The survey results will be ___ at the next board meeting.",
+  o:["discussed","talked","spoken","argued"], a:0,
+  clue:"<b>be ___ at</b> (passive ไม่มีบุพบทตาม) → ต้องเป็นกริยาที่มีกรรมตรงได้",
+  why:"discuss + กรรม ได้เลย (discuss the results ไม่ต้องมี about)",
+  traps:["talk / speak ต้องใช้ about จึงทำเป็น passive แบบนี้ไม่ได้"]},
+
+ {c:"tense", s:"The new branch in Bangkok ___ next month.",
+  o:["opened","has opened","will open","was opening"], a:2,
+  clue:"<b>next month</b> → อนาคต",
+  why:"will open = จะเปิด",
+  traps:["มองคำบอกเวลาก่อนเสมอ ข้อนี้ไม่ต้องอ่านส่วนอื่นเลย"]},
+ {c:"tense", s:"When the manager called, Mr. Brown ___ the monthly report.",
+  o:["writes","was writing","has written","will write"], a:1,
+  clue:"<b>When + past simple (called)</b> → เหตุการณ์ที่กำลังทำอยู่ตอนนั้นใช้ past continuous",
+  why:"ตอนผู้จัดการโทรมา คุณบราวน์กำลังเขียนรายงานอยู่",
+  traps:["has written เป็นปัจจุบัน ไม่เข้ากับ called ที่เป็นอดีต"]},
+ {c:"tense", s:"The renovation work ___ by the end of this week.",
+  o:["will complete","will be completed","completes","completing"], a:1,
+  clue:"<b>work ถูกทำ + ไม่มีกรรมตามหลัง</b> → passive",
+  why:"งานปรับปรุง 'จะถูกทำเสร็จ' จึงใช้ will be completed",
+  traps:["will complete ต้องมีกรรม เช่น The team will complete the work"]},
+ {c:"tense", s:"Last year, the company ___ a record profit of $12 million.",
+  o:["reports","reported","has reported","will report"], a:1,
+  clue:"<b>Last year</b> → past simple",
+  why:"reported = รายงาน (ในอดีต)",
+  traps:["has reported ใช้กับคำบอกเวลาที่ชี้จุดในอดีตชัดๆ (last year, in 2020, ago) ไม่ได้"]},
+
+ {c:"agree", s:"The number of tourists visiting the city ___ increased this year.",
+  o:["have","has","having","are"], a:1,
+  clue:"<b>The number of</b> = จำนวน → เอกพจน์",
+  why:"ประธานจริงคือ The number จึงใช้ has",
+  traps:["A number of + นามพหูพจน์ = หลาย... → ใช้กริยาพหูพจน์ (A number of tourists have ...)"]},
+ {c:"agree", s:"Neither the manager nor the assistants ___ aware of the schedule change.",
+  o:["was","were","is","being"], a:1,
+  clue:"<b>Neither A nor B</b> → กริยาผันตาม B (ตัวที่อยู่ใกล้)",
+  why:"B คือ the assistants เป็นพหูพจน์ จึงใช้ were",
+  traps:["either ... or ... ก็ผันตามตัวใกล้เหมือนกัน"]},
+ {c:"agree", s:"Every employee ___ required to wear an identification badge.",
+  o:["are","is","were","be"], a:1,
+  clue:"<b>Every + นามเอกพจน์</b> → กริยาเอกพจน์",
+  why:"Every employee is required ...",
+  traps:["Every / Each / Anyone / Everyone ใช้กริยาเอกพจน์ทั้งหมด"]},
+
+ {c:"prep", s:"The package will arrive ___ three business days.",
+  o:["within","until","by","since"], a:0,
+  clue:"<b>___ + ช่วงเวลา (three days)</b> → within",
+  why:"within three business days = ภายใน 3 วันทำการ",
+  traps:["by ตามด้วยจุดเวลา (by Friday), since ตามด้วยจุดเวลาในอดีต"]},
+ {c:"prep", s:"The seminar will be held ___ May 15.",
+  o:["in","on","at","for"], a:1,
+  clue:"<b>วันที่</b> → on",
+  why:"on + วัน/วันที่, in + เดือน/ปี, at + เวลา",
+  traps:["in May (เดือน) แต่ on May 15 (มีวันที่)"]},
+ {c:"prep", s:"Mr. Ito has worked in the accounting department ___ ten years.",
+  o:["since","for","during","from"], a:1,
+  clue:"<b>___ + ระยะเวลา (ten years)</b> → for",
+  why:"for ten years = เป็นเวลา 10 ปี",
+  traps:["since ตามด้วยจุดเวลา (since 2015)"]},
+
+ {c:"comp", s:"Sales in the second quarter were ___ profitable than in the first.",
+  o:["much","more","most","very"], a:1,
+  clue:"<b>than</b> + adj ยาว (profitable) → more",
+  why:"more profitable than = ทำกำไรมากกว่า",
+  traps:["much ใช้ขยายขั้นกว่า (much more profitable) แต่ใช้แทน more ไม่ได้"]},
+ {c:"comp", s:"Of the three plans we offer, the Basic Plan is the ___ affordable.",
+  o:["more","most","much","many"], a:1,
+  clue:"<b>Of the three ... the ___</b> → 3 สิ่งขึ้นไป ใช้ขั้นสุด",
+  why:"the most affordable = ราคาย่อมเยาที่สุด",
+  traps:["ถ้าเปรียบเทียบแค่ 2 สิ่ง (of the two) จะใช้ the more ได้"]},
+ {c:"comp", s:"The new printer works as ___ as the old one.",
+  o:["quick","quickly","quicker","quickest"], a:1,
+  clue:"<b>as ___ as</b> → ใช้รูปปกติ แล้วดูว่าขยายอะไร ขยายกริยา works จึงเป็น adverb",
+  why:"works as quickly as = ทำงานเร็วเท่ากับ",
+  traps:["ข้อนี้ผสมชนิดของคำกับการเปรียบเทียบ ถ้าเป็น is as quick as จะใช้ adj"]},
+];
+
+const SETS = {s1:Q1, s2:Q2};
+const START = 101, TARGET = 20;
+let Q = Q1, N = Q.length, state;
+function freshState(){ state = {i:0, ans:Array(N).fill(null), filter:"all", qStart:Date.now(), qTime:Array(N).fill(0)}; }
+freshState();
 const $ = id => document.getElementById(id);
 const L = ["A","B","C","D"];
 
 function visible(){ return Q.map((q,i)=>i).filter(i => state.filter==="all" || Q[i].c===state.filter); }
 
 function renderTabs(){
-  const box = document.querySelector(".tabs");
+  const box = document.querySelector(".cats-filter");
+  box.innerHTML = '<button class="chip" data-filter="all" aria-pressed="true" id="f-all">ทุกหมวด</button>';
   Object.entries(CATS).forEach(([k,v])=>{
     const n = Q.filter(q=>q.c===k).length;
+    if(!n) return;
     const b = document.createElement("button");
     b.className="chip"; b.dataset.filter=k; b.id="f-"+k; b.setAttribute("aria-pressed","false");
     b.textContent = v.th.split(" (")[0] + " · " + n;
     box.appendChild(b);
   });
-  box.addEventListener("click", e=>{
-    const b = e.target.closest(".chip"); if(!b) return;
-    state.filter = b.dataset.filter;
-    box.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c===b));
-    state.i = visible()[0]; $("result").hidden = true; render();
-  });
 }
+document.querySelector(".cats-filter").addEventListener("click", e=>{
+  const b = e.target.closest(".chip"); if(!b) return;
+  state.filter = b.dataset.filter;
+  e.currentTarget.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c===b));
+  state.i = visible()[0]; $("result").hidden = true; render();
+});
+document.querySelector(".sets").addEventListener("click", e=>{
+  const b = e.target.closest(".chip"); if(!b) return;
+  e.currentTarget.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c===b));
+  Q = SETS[b.dataset.set]; N = Q.length; freshState();
+  $("result").hidden = true; renderTabs(); render();
+});
 
 function render(){
   const i = state.i, q = Q[i], pick = state.ans[i], done = pick!==null;
@@ -435,7 +602,7 @@ setInterval(()=>{
   const s = Math.round((Date.now()-state.qStart)/1000);
   const t = $("timer");
   if(state.ans[state.i]!==null){ t.textContent = "ข้อนี้ "+state.qTime[state.i]+" วิ"; t.classList.remove("over"); return; }
-  t.textContent = "ข้อนี้ 0:"+String(s).padStart(2,"0");
+  t.textContent = "ข้อนี้ "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
   t.classList.toggle("over", s>TARGET);
 },500);
 
