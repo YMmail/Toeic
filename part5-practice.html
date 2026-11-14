@@ -3,12 +3,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: one narrow answer-sheet column; question on top, OMR-style bubbles below, results replace it at the end */
+/* Layout: one narrow answer-sheet column; round controls on top, question + OMR bubbles, answer grid, results */
 :root{
   --bg:#f3f5f8; --paper:#ffffff; --ink:#1b2230; --muted:#5d6879; --line:#d9dee7;
-  --sheet:#c2410c;        /* answer-sheet print colour */
-  --sheet-soft:#fff1ea;
-  --graphite:#2b3240;     /* filled pencil bubble */
+  --sheet:#c2410c; --sheet-soft:#fff1ea; --graphite:#2b3240;
   --ok:#15803d; --ok-soft:#e7f6ec; --bad:#b91c1c; --bad-soft:#fdecec;
   --font-body:"IBM Plex Sans Thai",system-ui,sans-serif;
   --font-mono:"IBM Plex Mono",ui-monospace,monospace;
@@ -30,20 +28,25 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-siz
 header{display:flex;flex-direction:column;gap:6px}
 .eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--sheet)}
 h1{margin:0;font-size:28px;line-height:1.25;text-wrap:balance}
+h2{margin:0;font-size:18px}
 .sub{margin:0;color:var(--muted);font-size:15px}
+
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.status{font-size:14px;color:var(--muted);flex-basis:100%;margin:0;min-height:1.6em}
+.status.err{color:var(--bad)}
 
 .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--font-mono);font-size:13px;color:var(--muted)}
 .bar .grow{flex:1;min-width:120px;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
 .bar .fill{height:100%;background:var(--sheet);width:0;transition:width .25s}
 .timer.over{color:var(--bad)}
-.tabs{display:flex;gap:6px;flex-wrap:wrap}
-.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:4px 12px;border-radius:999px;cursor:pointer}
-.chip[aria-pressed="true"]{border-color:var(--sheet);background:var(--sheet-soft);color:var(--sheet);font-weight:600}
 
 .card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:18px}
 .qhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .qno{font-family:var(--font-mono);font-weight:600;color:var(--sheet);font-size:15px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
 .tag{font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:4px;padding:1px 8px}
+.tag.ai{border-style:solid;color:var(--sheet);border-color:var(--sheet)}
+.tag.hide{visibility:hidden}
 .stem{font-size:19px;line-height:1.65;margin:0}
 .blank{display:inline-block;min-width:5.5em;border-bottom:2px solid var(--ink);text-align:center;font-weight:600}
 .blank.ok{color:var(--ok);border-color:var(--ok)}
@@ -53,7 +56,7 @@ h1{margin:0;font-size:28px;line-height:1.25;text-wrap:balance}
 .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font:inherit;font-size:17px;color:var(--ink);
   background:transparent;border:1px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
 .opt:hover:not(:disabled){border-color:var(--sheet)}
-.opt:focus-visible,.chip:focus-visible,.btn:focus-visible,.cell:focus-visible{outline:2px solid var(--sheet);outline-offset:2px}
+.opt:focus-visible,.btn:focus-visible,.cell:focus-visible{outline:2px solid var(--sheet);outline-offset:2px}
 .bubble{flex:none;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--sheet);color:var(--sheet);
   display:grid;place-items:center;font-family:var(--font-mono);font-size:13px;font-weight:600}
 .opt.picked .bubble{background:var(--graphite);border-color:var(--graphite);color:var(--paper)}
@@ -65,15 +68,18 @@ h1{margin:0;font-size:28px;line-height:1.25;text-wrap:balance}
 .feedback{border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px}
 .verdict{font-weight:700;font-size:17px}
 .verdict.ok{color:var(--ok)} .verdict.bad{color:var(--bad)}
+.verdict small{font-weight:400;color:var(--muted);font-size:14px}
 .feedback p{margin:0}
 .clue{background:var(--sheet-soft);border-radius:6px;padding:10px 12px;font-size:15px}
 .clue b{color:var(--sheet)}
-.why{font-size:15px;color:var(--ink)}
+.why{font-size:15px}
 .why ul{margin:6px 0 0;padding-left:20px;color:var(--muted)}
+.note{font-size:13px;color:var(--muted)}
 
-.nav{display:flex;justify-content:space-between;gap:10px}
+.nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .btn{font:inherit;font-weight:600;font-size:15px;padding:10px 18px;border-radius:8px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
 .btn.primary{background:var(--sheet);border-color:var(--sheet);color:#fff}
+.btn.small{font-size:14px;padding:7px 14px}
 .btn:disabled{opacity:.4;cursor:default}
 
 .grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
@@ -95,7 +101,11 @@ h1{margin:0;font-size:28px;line-height:1.25;text-wrap:balance}
 .advice{display:grid;gap:10px}
 .advice div{border-left:3px solid var(--bad);padding:4px 0 4px 12px;font-size:15px}
 .advice b{display:block}
-h2{margin:0;font-size:18px}
+.hist{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.hist th,.hist td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.hist th{font-weight:500;color:var(--muted);font-size:13px}
+.hist td.num{font-family:var(--font-mono)}
+.tablebox{overflow-x:auto}
 .tips{margin:0;padding-left:20px;display:grid;gap:4px;font-size:15px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -104,17 +114,18 @@ h2{margin:0;font-size:18px}
   <header>
     <div class="eyebrow">Reading · Part 5 · Incomplete Sentences</div>
     <h1>ฝึกทำข้อสอบ TOEIC Part 5</h1>
-    <p class="sub">ชุดละ 30 ข้อ (101–130) เหมือนข้อสอบจริง เป้าหมายคือข้อละไม่เกิน 20 วินาที ตอบแล้วจะเห็นเฉลยและวิธีคิดทันที</p>
+    <p class="sub">สุ่มใหม่ทุกรอบ รอบละ 30 ข้อ (101–130) สัดส่วนหมวดตามข้อสอบจริง ข้อที่เคยตอบผิดมีโอกาสถูกสุ่มมาเจออีก ตั้งเป้าข้อละไม่เกิน 20 วินาที</p>
   </header>
 
-  <div class="tabs sets" role="group" aria-label="เลือกชุด">
-    <button class="chip" data-set="s1" aria-pressed="true" id="set-1">ชุดที่ 1 · รวมทุกเรื่อง</button>
-    <button class="chip" data-set="s2" aria-pressed="false" id="set-2">ชุดที่ 2 · เน้นจุดอ่อน</button>
+  <div class="controls">
+    <button class="btn small" id="new-round">สุ่มชุดใหม่</button>
+    <button class="btn small primary" id="gen" hidden>ให้ Claude ออกข้อสอบใหม่ 30 ข้อ</button>
+    <button class="btn small" id="stop" hidden>หยุด</button>
+    <p class="status" id="status"></p>
   </div>
-  <div class="tabs cats-filter" role="group" aria-label="เลือกหมวด"></div>
 
   <div class="bar">
-    <span id="pos">101 / 130</span>
+    <span id="pos">รอบที่ 1 · ข้อ 101</span>
     <div class="grow"><div class="fill" id="fill"></div></div>
     <span class="timer" id="timer">0:00</span>
   </div>
@@ -129,6 +140,11 @@ h2{margin:0;font-size:18px}
   <div class="grid" id="grid" aria-label="กระดาษคำตอบ"></div>
 
   <section id="result" class="card" hidden></section>
+
+  <section class="card" id="history-card" hidden>
+    <h2>คะแนนแต่ละรอบ</h2>
+    <div class="tablebox"><table class="hist" id="hist"></table></div>
+  </section>
 
   <section class="card">
     <h2>ทริคทำ Part 5 ให้ทัน</h2>
@@ -155,7 +171,7 @@ const CATS = {
   vocab: {th:"คำศัพท์ / Collocation", tip:"จำเป็นคู่: comply with, take effect, out of stock, proof of purchase"},
 };
 
-// a = index of correct answer. clue = what to look at. why = explanation. traps = why other options are wrong.
+
 const Q1 = [
  {c:"form", s:"The new software has significantly improved the ___ of our customer service team.",
   o:["efficient","efficiently","efficiency","more efficient"], a:2,
@@ -475,136 +491,428 @@ const Q2 = [
   traps:["ข้อนี้ผสมชนิดของคำกับการเปรียบเทียบ ถ้าเป็น is as quick as จะใช้ adj"]},
 ];
 
-const SETS = {s1:Q1, s2:Q2};
-const START = 101, TARGET = 20;
-let Q = Q1, N = Q.length, state;
-function freshState(){ state = {i:0, ans:Array(N).fill(null), filter:"all", qStart:Date.now(), qTime:Array(N).fill(0)}; }
-freshState();
-const $ = id => document.getElementById(id);
+
+const Q3 = [
+ {c:"form", s:"The ___ of the outdoor event depends largely on the weather.",
+  o:["success","succeed","successful","successfully"], a:0,
+  clue:"<b>The ___ of</b> → คำนาม", why:"success (n.) = ความสำเร็จ",
+  traps:["successful เป็น adj, succeed เป็นกริยา"]},
+ {c:"form", s:"Please handle the package ___ because it contains glass items.",
+  o:["careful","carefully","care","caring"], a:1,
+  clue:"<b>handle the package ___</b> → ประโยคครบแล้ว ช่องท้ายใช้ adverb", why:"carefully = อย่างระมัดระวัง ขยายกริยา handle",
+  traps:["careful เป็น adj ใช้ขยายนาม"]},
+ {c:"form", s:"Ms. Ortiz is known for her ___ approach to solving problems.",
+  o:["create","creative","creatively","creation"], a:1,
+  clue:"<b>her ___ approach</b> → ระหว่างคำแสดงความเป็นเจ้าของกับนาม ใช้ adjective", why:"creative (adj.) = สร้างสรรค์",
+  traps:["creation เป็นนาม, creatively เป็น adv"]},
+ {c:"form", s:"The company's profits rose ___ in the last quarter.",
+  o:["sharp","sharply","sharpen","sharpness"], a:1,
+  clue:"<b>rose ___</b> → ขยายกริยา rose ใช้ adverb", why:"rose sharply = เพิ่มขึ้นอย่างมาก",
+  traps:["คู่ที่ออกบ่อย: increase significantly, rise sharply, decline slightly, grow steadily"]},
+ {c:"form", s:"We received more than 200 ___ for the marketing manager position.",
+  o:["apply","applicants","applicable","applied"], a:1,
+  clue:"<b>200 ___</b> → หลังตัวเลขต้องเป็นนามพหูพจน์", why:"applicants = ผู้สมัคร",
+  traps:["applicable เป็น adj (ใช้ได้/เกี่ยวข้อง)"]},
+ {c:"form", s:"The museum's new exhibit is becoming ___ popular with international visitors.",
+  o:["increasing","increasingly","increase","increased"], a:1,
+  clue:"<b>___ popular</b> → ขยาย adj ใช้ adverb", why:"increasingly popular = ได้รับความนิยมมากขึ้นเรื่อยๆ",
+  traps:["adv ที่ขยาย adj ที่เจอบ่อย: extremely, highly, increasingly, relatively"]},
+
+ {c:"vocab", s:"Mr. Chen will ___ the sales team while Ms. Ross is on leave.",
+  o:["supervise","attend","participate","consist"], a:0,
+  clue:"<b>___ the sales team</b> → ทำอะไรกับทีมระหว่างที่หัวหน้าลา = ดูแล", why:"supervise = ควบคุมดูแล",
+  traps:["participate ต้องมี in, consist ต้องมี of"]},
+ {c:"vocab", s:"The contract must be signed by both parties before it becomes ___.",
+  o:["valid","available","capable","eligible"], a:0,
+  clue:"<b>contract becomes ___</b> → สัญญามีผล", why:"valid = มีผลใช้ได้ (ตามกฎหมาย)",
+  traps:["eligible = มีสิทธิ์ ใช้กับคน","capable = มีความสามารถ ใช้กับคน"]},
+ {c:"vocab", s:"Only employees who have worked here for a year are ___ for the bonus.",
+  o:["eligible","available","capable","possible"], a:0,
+  clue:"<b>be eligible for</b> = มีสิทธิ์ได้รับ", why:"พนักงานที่ทำงานครบปีเท่านั้นที่มีสิทธิ์ได้โบนัส",
+  traps:["capable ใช้ capable of","available = ว่าง/มีให้ใช้"]},
+ {c:"vocab", s:"Ms. Kim was ___ to regional director after ten years with the company.",
+  o:["promoted","applied","employed","retired"], a:0,
+  clue:"<b>be ___ to + ตำแหน่ง</b> → ได้เลื่อนตำแหน่ง", why:"be promoted to = ได้เลื่อนขั้นเป็น",
+  traps:[]},
+ {c:"vocab", s:"The team worked overtime to meet the project ___.",
+  o:["deadline","period","duration","moment"], a:0,
+  clue:"<b>meet the deadline</b> = ทันกำหนดส่ง", why:"collocation ที่ออกบ่อยมาก",
+  traps:[]},
+ {c:"vocab", s:"The restaurant requires ___ for groups of eight or more.",
+  o:["reservations","admissions","subscriptions","registrations"], a:0,
+  clue:"<b>ร้านอาหาร + กลุ่มใหญ่</b> → ต้องจองโต๊ะ", why:"reservation = การจอง",
+  traps:["subscription = การสมัครสมาชิก (นิตยสาร บริการรายเดือน)","admission = การเข้า/ค่าเข้าชม"]},
+ {c:"vocab", s:"Please ___ us of any change to your mailing address.",
+  o:["inform","explain","announce","describe"], a:0,
+  clue:"<b>___ us of</b> → inform + คน + of + เรื่อง", why:"inform us of = แจ้งให้เราทราบเรื่อง",
+  traps:["explain / announce / describe ไม่ใช้รูป + คน + of"]},
+ {c:"vocab", s:"Thank you for your ___ in our company's products.",
+  o:["interest","attention","concern","curiosity"], a:0,
+  clue:"<b>interest in</b> = ความสนใจใน", why:"ประโยคเปิดอีเมลตอบลูกค้าที่เจอบ่อยมาก",
+  traps:["attention ใช้ attention to"]},
+ {c:"vocab", s:"Our technicians are ___ 24 hours a day to assist you.",
+  o:["available","accessible","convenient","eligible"], a:0,
+  clue:"<b>คน + ___ + ช่วงเวลา</b> → พร้อมให้บริการ", why:"available = ว่าง/พร้อมให้บริการ",
+  traps:["accessible ใช้กับสถานที่หรือข้อมูล (เข้าถึงได้)","convenient ใช้กับเวลาหรือสถานที่ ไม่ใช้กับคน"]},
+ {c:"vocab", s:"The CEO will ___ the opening ceremony on Monday.",
+  o:["attend","participate","appear","arrive"], a:0,
+  clue:"<b>___ the ceremony</b> ไม่มีบุพบท → กริยาที่มีกรรมตรง", why:"attend = เข้าร่วม",
+  traps:["participate ต้องมี in, arrive ต้องมี at"]},
+
+ {c:"prep", s:"Our customer service center is open Monday ___ Friday.",
+  o:["through","between","among","across"], a:0,
+  clue:"<b>Monday ___ Friday</b> → ตั้งแต่...ถึง...", why:"through = ถึง (รวมวันสุดท้าย)",
+  traps:["between ต้องคู่กับ and"]},
+ {c:"prep", s:"All orders over $50 are eligible ___ free shipping.",
+  o:["for","to","with","at"], a:0,
+  clue:"<b>eligible for</b>", why:"มีสิทธิ์ได้รับการส่งฟรี",
+  traps:["eligible to ตามด้วยกริยา (eligible to apply)"]},
+ {c:"prep", s:"The weekly staff meeting has been moved ___ Room 305.",
+  o:["to","at","on","by"], a:0,
+  clue:"<b>move ___ สถานที่ใหม่</b> → to (ทิศทาง)", why:"moved to Room 305 = ย้ายไปห้อง 305",
+  traps:[]},
+ {c:"prep", s:"Applicants must have at least three years of experience ___ customer service.",
+  o:["in","on","at","by"], a:0,
+  clue:"<b>experience in</b> + สาขา", why:"ประสบการณ์ด้านบริการลูกค้า",
+  traps:[]},
+ {c:"prep", s:"Refunds will be issued ___ receipt of the returned item.",
+  o:["upon","along","across","beside"], a:0,
+  clue:"<b>upon receipt of</b> = เมื่อได้รับ", why:"วลีทางการที่ออกบ่อยในเรื่องการคืนสินค้า",
+  traps:[]},
+
+ {c:"conj", s:"___ the price increase, sales of the product remained strong.",
+  o:["Despite","Although","Even if","Unless"], a:0,
+  clue:"<b>หลังช่องว่างเป็นนาม</b> (the price increase) + ความหมายขัดแย้ง", why:"Despite + นาม = แม้ว่า",
+  traps:["Although / Even if / Unless ต้องตามด้วยประโยค"]},
+ {c:"conj", s:"The workshop was canceled ___ not enough people had registered.",
+  o:["because","because of","due to","despite"], a:0,
+  clue:"<b>หลังช่องว่างเป็นประโยค</b> (people had registered)", why:"because + ประโยค = เพราะว่า",
+  traps:["because of / due to / despite ตามด้วยนาม"]},
+ {c:"conj", s:"Please complete the form ___ we can issue your ID card.",
+  o:["so that","such as","as well as","rather than"], a:0,
+  clue:"<b>เพื่อที่จะ</b> + ประโยค", why:"so that = เพื่อที่",
+  traps:["such as = เช่น, as well as = และ, rather than = แทนที่จะ"]},
+ {c:"conj", s:"The room rate includes breakfast ___ does not include parking.",
+  o:["but","and","or","so"], a:0,
+  clue:"<b>รวม ... ___ ไม่รวม</b> → ความหมายขัดกัน", why:"but = แต่",
+  traps:[]},
+
+ {c:"tense", s:"The package ___ to your office yesterday afternoon.",
+  o:["was delivered","delivered","has been delivered","is delivering"], a:0,
+  clue:"<b>yesterday</b> → อดีต, <b>package ถูกส่ง</b> → passive", why:"was delivered = ถูกส่งแล้ว (อดีต)",
+  traps:["has been delivered ใช้กับ yesterday ไม่ได้","delivered แบบ active ต้องมีคนส่งเป็นประธาน"]},
+ {c:"tense", s:"Since joining the company, Mr. Park ___ three major projects.",
+  o:["has managed","manages","managed","will manage"], a:0,
+  clue:"<b>Since</b> → present perfect", why:"ตั้งแต่เข้าบริษัทมาจนถึงตอนนี้ ดูแลมาแล้ว 3 โปรเจกต์",
+  traps:[]},
+ {c:"tense", s:"If the shipment ___ late, we will contact you immediately.",
+  o:["arrives","will arrive","arrived","arriving"], a:0,
+  clue:"<b>If + present simple, will + V</b>", why:"ในประโยค if ห้ามใช้ will",
+  traps:["ใช้หลัก if/when/before/after/as soon as + present simple เมื่อพูดถึงอนาคต"]},
+ {c:"tense", s:"Ms. Lopez ___ to the Tokyo office early next year.",
+  o:["will transfer","transferred","has transferred","transferring"], a:0,
+  clue:"<b>next year</b> → อนาคต", why:"will transfer = จะย้าย",
+  traps:[]},
+
+ {c:"pron", s:"Employees should keep ___ passwords confidential at all times.",
+  o:["their","them","they","themselves"], a:0,
+  clue:"<b>___ + นาม (passwords)</b> → คำแสดงความเป็นเจ้าของ", why:"their passwords = รหัสผ่านของพวกเขา",
+  traps:[]},
+ {c:"pron", s:"The client ___ we met last week has decided to sign the contract.",
+  o:["whom","whose","which","what"], a:0,
+  clue:"<b>คน + ___ + ประธาน + กริยา</b> (we met) → whom เป็นกรรม", why:"we met him → whom",
+  traps:["whose ต้องตามด้วยนาม","which ใช้กับสิ่งของ"]},
+ {c:"pron", s:"Ms. Lee prepared the budget report ___ because her assistant was out sick.",
+  o:["herself","her","hers","she"], a:0,
+  clue:"<b>ประโยคครบแล้ว + ทำด้วยตัวเอง</b> → -self", why:"herself = ด้วยตัวเธอเอง เน้นว่าทำเอง",
+  traps:[]},
+ {c:"pron", s:"Ms. Patel and ___ assistant will attend the trade fair in Singapore.",
+  o:["she","her","hers","herself"], a:1,
+  clue:"<b>___ + นาม (assistant)</b> → คำแสดงความเป็นเจ้าของ", why:"her assistant = ผู้ช่วยของเธอ",
+  traps:["hers ใช้แทนทั้งนามและไม่มีนามตามหลัง เช่น The bag is hers"]},
+
+ {c:"agree", s:"One of our regional managers ___ to Singapore every month.",
+  o:["travels","travel","traveling","have traveled"], a:0,
+  clue:"<b>One of + นามพหูพจน์</b> → ประธานคือ One (เอกพจน์)", why:"ใช้ travels",
+  traps:[]},
+ {c:"ving", s:"The board decided ___ the company's headquarters to Bangkok.",
+  o:["to move","moving","move","moved"], a:0,
+  clue:"<b>decide + to V</b>", why:"decided to move = ตัดสินใจย้าย",
+  traps:["กริยาที่ตามด้วย to V: decide, plan, agree, hope, expect, offer"]},
+ {c:"ving", s:"Ms. Smith suggested ___ the meeting until Friday.",
+  o:["postponing","to postpone","postpone","postponed"], a:0,
+  clue:"<b>suggest + V-ing</b>", why:"suggested postponing = เสนอให้เลื่อน",
+  traps:["กริยาที่ตามด้วย V-ing: suggest, recommend, consider, avoid, finish, mind"]},
+ {c:"comp", s:"The new laptop is ___ lighter than the previous model.",
+  o:["significantly","significant","more","most"], a:0,
+  clue:"<b>___ + lighter than</b> → ขยายขั้นกว่าด้วย adverb", why:"significantly lighter = เบากว่ามาก",
+  traps:["more lighter ผิด เพราะ lighter เป็นขั้นกว่าอยู่แล้ว"]},
+];
+
+/* ---------- storage (per-viewer, optional) ---------- */
+const store = {
+  get(k,d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch{ return d; } },
+  set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
+};
+let stats = store.get("p5.stats", {});      // stem -> {seen, lastWrong}
+let history = store.get("p5.history", []);  // [{no, score, total, avg, date, src}]
+let gen = store.get("p5.gen", []);          // questions Claude wrote earlier
+
+const BANK = [...Q1, ...Q2, ...Q3];
+const START = 101, SIZE = 30, TARGET = 20;
+const BASE_QUOTA = {form:8, vocab:7, tense:4, prep:3, conj:3, pron:2, agree:1, comp:1, ving:1};
 const L = ["A","B","C","D"];
+const $ = id => document.getElementById(id);
 
-function visible(){ return Q.map((q,i)=>i).filter(i => state.filter==="all" || Q[i].c===state.filter); }
-
-function renderTabs(){
-  const box = document.querySelector(".cats-filter");
-  box.innerHTML = '<button class="chip" data-filter="all" aria-pressed="true" id="f-all">ทุกหมวด</button>';
-  Object.entries(CATS).forEach(([k,v])=>{
-    const n = Q.filter(q=>q.c===k).length;
-    if(!n) return;
-    const b = document.createElement("button");
-    b.className="chip"; b.dataset.filter=k; b.id="f-"+k; b.setAttribute("aria-pressed","false");
-    b.textContent = v.th.split(" (")[0] + " · " + n;
-    box.appendChild(b);
-  });
+function pool(){ const seen = new Set(); return [...BANK, ...gen].filter(q => !seen.has(q.s) && seen.add(q.s)); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function weight(q){ const s = stats[q.s]; if(!s) return 2; return s.lastWrong ? 3 : 0.5; }
+function wpick(arr, n){
+  const out = [], c = arr.slice();
+  while(out.length < n && c.length){
+    let r = Math.random() * c.reduce((t,q)=>t+weight(q),0), k = 0;
+    for(; k<c.length-1; k++){ r -= weight(c[k]); if(r<=0) break; }
+    out.push(c.splice(k,1)[0]);
+  }
+  return out;
 }
-document.querySelector(".cats-filter").addEventListener("click", e=>{
-  const b = e.target.closest(".chip"); if(!b) return;
-  state.filter = b.dataset.filter;
-  e.currentTarget.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c===b));
-  state.i = visible()[0]; $("result").hidden = true; render();
-});
-document.querySelector(".sets").addEventListener("click", e=>{
-  const b = e.target.closest(".chip"); if(!b) return;
-  e.currentTarget.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c===b));
-  Q = SETS[b.dataset.set]; N = Q.length; freshState();
-  $("result").hidden = true; renderTabs(); render();
-});
+function shuffleOpts(q){ const idx = shuffle([0,1,2,3]); return {...q, o:idx.map(i=>q.o[i]), a:idx.indexOf(q.a)}; }
 
+// Weak categories from past answers: accuracy below 70% with at least 3 answers
+function weakCats(){
+  const by = {};
+  history.slice(-5).forEach(h => Object.entries(h.cats||{}).forEach(([c,v])=>{ by[c]=by[c]||{r:0,n:0}; by[c].r+=v.r; by[c].n+=v.n; }));
+  return Object.entries(by).filter(([,v])=>v.n>=3 && v.r/v.n<0.7).map(([c])=>c);
+}
+// Real-test mix, with one extra question for each weak category taken from the largest buckets
+function quota(){
+  const q = {...BASE_QUOTA};
+  weakCats().forEach(c=>{
+    const donor = Object.keys(q).filter(k=>!weakCats().includes(k) && q[k]>1).sort((a,b)=>q[b]-q[a])[0];
+    if(donor){ q[donor]--; q[c]++; }
+  });
+  return q;
+}
+
+function pickRound(extra = []){
+  const all = pool(), chosen = [...extra], used = new Set(extra.map(q=>q.s));
+  const need = quota();
+  extra.forEach(q => { if(need[q.c]) need[q.c]--; });
+  Object.entries(need).forEach(([c,n]) => {
+    if(chosen.length >= SIZE) return;
+    wpick(all.filter(q=>q.c===c && !used.has(q.s)), Math.min(n, SIZE-chosen.length)).forEach(q=>{ chosen.push(q); used.add(q.s); });
+  });
+  if(chosen.length < SIZE) wpick(all.filter(q=>!used.has(q.s)), SIZE-chosen.length).forEach(q=>chosen.push(q));
+  return shuffle(chosen.slice(0,SIZE)).map(shuffleOpts);
+}
+
+let round;
+function newRound(extra = [], src = "bank"){
+  round = {no: history.length + 1, src, qs: pickRound(extra), i:0, done:false};
+  round.ans = Array(round.qs.length).fill(null);
+  round.qTime = Array(round.qs.length).fill(0);
+  saveRound(); $("result").hidden = true; render();
+}
+function saveRound(){ store.set("p5.round", round); }
+
+/* ---------- rendering ---------- */
+let qStart = Date.now();
 function render(){
-  const i = state.i, q = Q[i], pick = state.ans[i], done = pick!==null;
-  const list = visible(), k = list.indexOf(i);
-  $("pos").textContent = `${START+i} · ข้อที่ ${k+1} จาก ${list.length}`;
-  $("fill").style.width = (list.filter(j=>state.ans[j]!==null).length / list.length*100)+"%";
+  const i = round.i, q = round.qs[i], pick = round.ans[i], done = pick !== null, n = round.qs.length;
+  $("pos").textContent = `รอบที่ ${round.no} · ข้อ ${START+i}`;
+  $("fill").style.width = (round.ans.filter(a=>a!==null).length / n * 100) + "%";
   const blank = done ? `<span class="blank ${pick===q.a?"ok":"bad"}">${q.o[q.a]}</span>` : `<span class="blank">&nbsp;</span>`;
   $("quiz").innerHTML = `
-    <div class="qhead"><span class="qno">${START+i}.</span><span class="tag">${CATS[q.c].th}</span></div>
-    <p class="stem">${q.s.replace("___", blank)}</p>
+    <div class="qhead"><span class="qno">${START+i}.</span>
+      <span class="tags">${q.ai?'<span class="tag ai">Claude สร้าง</span>':''}<span class="tag ${done?"":"hide"}">${CATS[q.c].th}</span></span></div>
+    <p class="stem">${esc(q.s).replace("___", blank)}</p>
     <div class="opts">${q.o.map((o,j)=>{
-      let cls="opt";
+      let cls = "opt";
       if(done){ if(j===q.a) cls+=" correct"; else if(j===pick) cls+=" wrong picked"; }
-      return `<button class="${cls}" data-j="${j}" ${done?"disabled":""} id="opt-${i}-${j}"><span class="bubble">${L[j]}</span><span>${o}</span></button>`;
+      return `<button class="${cls}" data-j="${j}" ${done?"disabled":""} id="opt-${i}-${j}"><span class="bubble">${L[j]}</span><span>${esc(o)}</span></button>`;
     }).join("")}</div>
     ${done ? `<div class="feedback">
-      <div class="verdict ${pick===q.a?"ok":"bad"}">${pick===q.a?"ถูกต้อง":"ยังไม่ถูก คำตอบคือ ("+L[q.a]+") "+q.o[q.a]}
-        <span style="font-weight:400;color:var(--muted);font-size:14px"> · ใช้เวลา ${state.qTime[i]} วินาที${state.qTime[i]>TARGET?" (เกินเป้า 20 วิ)":""}</span></div>
+      <div class="verdict ${pick===q.a?"ok":"bad"}">${pick===q.a?"ถูกต้อง":"ยังไม่ถูก คำตอบคือ ("+L[q.a]+") "+esc(q.o[q.a])}
+        <small> · ใช้เวลา ${round.qTime[i]} วินาที${round.qTime[i]>TARGET?" (เกินเป้า 20 วิ)":""}</small></div>
       <p class="clue">${q.clue}</p>
-      <div class="why">${q.why}${q.traps.length?`<ul>${q.traps.map(t=>`<li>${t}</li>`).join("")}</ul>`:""}</div>
-    </div>`:""}`;
-  $("prev").disabled = k<=0;
-  const answered = list.every(j=>state.ans[j]!==null);
-  $("next").textContent = k===list.length-1 ? "ดูผลคะแนน" : "ข้อถัดไป";
-  $("next").disabled = k===list.length-1 && !answered;
-  renderGrid();
-  state.qStart = Date.now();
-}
-
-function renderGrid(){
-  const list = visible();
-  $("grid").innerHTML = list.map(j=>{
-    let cls="cell"; if(j===state.i) cls+=" now";
-    if(state.ans[j]!==null) cls+= state.ans[j]===Q[j].a?" ok":" bad";
+      <div class="why">${q.why}${q.traps&&q.traps.length?`<ul>${q.traps.map(t=>`<li>${t}</li>`).join("")}</ul>`:""}</div>
+      ${q.ai?'<p class="note">ข้อนี้ Claude สร้างขึ้นใหม่ ถ้าเฉลยดูไม่สมเหตุสมผล ให้ถามในแชทได้</p>':''}
+    </div>` : ""}`;
+  $("prev").disabled = i===0;
+  const last = i===n-1, allDone = round.ans.every(a=>a!==null);
+  $("next").textContent = last ? "ดูผลคะแนน" : "ข้อถัดไป";
+  $("next").disabled = last && !allDone;
+  $("grid").innerHTML = round.qs.map((qq,j)=>{
+    let cls = "cell"; if(j===i) cls+=" now";
+    if(round.ans[j]!==null) cls += round.ans[j]===qq.a ? " ok" : " bad";
     return `<button class="${cls}" data-j="${j}" id="cell-${j}" aria-label="ข้อ ${START+j}">${START+j}</button>`;
   }).join("");
+  qStart = Date.now();
 }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 
 $("quiz").addEventListener("click", e=>{
   const b = e.target.closest(".opt"); if(!b || b.disabled) return;
-  const i = state.i;
-  state.qTime[i] = Math.max(1, Math.round((Date.now()-state.qStart)/1000));
-  state.ans[i] = +b.dataset.j; render();
+  const i = round.i, q = round.qs[i];
+  round.qTime[i] = Math.max(1, Math.round((Date.now()-qStart)/1000));
+  round.ans[i] = +b.dataset.j;
+  const s = stats[q.s] || {seen:0};
+  stats[q.s] = {seen:s.seen+1, lastWrong: round.ans[i]!==q.a};
+  store.set("p5.stats", stats); saveRound(); render();
 });
-$("grid").addEventListener("click", e=>{
-  const b = e.target.closest(".cell"); if(!b) return;
-  state.i = +b.dataset.j; $("result").hidden = true; render();
-});
-$("prev").onclick = ()=>{ const l=visible(), k=l.indexOf(state.i); if(k>0){state.i=l[k-1]; render();} };
+$("grid").addEventListener("click", e=>{ const b = e.target.closest(".cell"); if(!b) return; round.i = +b.dataset.j; render(); });
+$("prev").onclick = ()=>{ if(round.i>0){ round.i--; saveRound(); render(); } };
 $("next").onclick = ()=>{
-  const l=visible(), k=l.indexOf(state.i);
-  if(k<l.length-1){ state.i=l[k+1]; render(); }
+  if(round.i < round.qs.length-1){ round.i++; saveRound(); render(); }
   else showResult();
 };
 document.addEventListener("keydown", e=>{
   if(e.target.matches("input,textarea")) return;
   const m = {a:0,b:1,c:2,d:3}[e.key.toLowerCase()];
-  if(m!==undefined && state.ans[state.i]===null){ $(`opt-${state.i}-${m}`)?.click(); }
+  if(m!==undefined && round.ans[round.i]===null) $(`opt-${round.i}-${m}`)?.click();
   if(e.key==="ArrowRight" || e.key==="Enter"){ if(!$("next").disabled) $("next").click(); }
-  if(e.key==="ArrowLeft"){ $("prev").click(); }
+  if(e.key==="ArrowLeft") $("prev").click();
 });
 
+/* ---------- results ---------- */
 function showResult(){
-  const list = visible();
-  const right = list.filter(j=>state.ans[j]===Q[j].a).length;
-  const secs = list.reduce((s,j)=>s+state.qTime[j],0);
-  const avg = Math.round(secs/list.length);
-  const byCat = {};
-  list.forEach(j=>{ const c=Q[j].c; byCat[c]=byCat[c]||{r:0,n:0}; byCat[c].n++; if(state.ans[j]===Q[j].a) byCat[c].r++; });
-  const weak = Object.entries(byCat).filter(([,v])=>v.r/v.n<0.7);
-  const wrong = list.filter(j=>state.ans[j]!==Q[j].a);
+  const qs = round.qs, n = qs.length;
+  const right = qs.filter((q,j)=>round.ans[j]===q.a).length;
+  const avg = Math.round(round.qTime.reduce((s,t)=>s+t,0)/n);
+  const cats = {};
+  qs.forEach((q,j)=>{ cats[q.c]=cats[q.c]||{r:0,n:0}; cats[q.c].n++; if(round.ans[j]===q.a) cats[q.c].r++; });
+  if(!round.done){
+    round.done = true;
+    history.push({no:round.no, score:right, total:n, avg, cats, src:round.src, date:new Date().toISOString().slice(0,10)});
+    history = history.slice(-30);
+    store.set("p5.history", history); saveRound();
+  }
+  const weak = Object.entries(cats).filter(([,v])=>v.r/v.n<0.7);
+  const wrong = qs.map((q,j)=>j).filter(j=>round.ans[j]!==qs[j].a);
   $("result").innerHTML = `
-    <h2>ผลคะแนน</h2>
-    <div class="score"><span class="big">${right}/${list.length}</span>
+    <h2>ผลคะแนนรอบที่ ${round.no}</h2>
+    <div class="score"><span class="big">${right}/${n}</span>
       <span>เฉลี่ยข้อละ ${avg} วินาที ${avg<=TARGET?"· ทันเวลาข้อสอบจริง":"· ยังช้ากว่าเป้า 20 วินาที"}</span></div>
-    <div class="cats">${Object.entries(byCat).map(([c,v])=>`
+    <div class="cats">${Object.entries(cats).sort((a,b)=>b[1].n-a[1].n).map(([c,v])=>`
       <div class="cat ${v.r/v.n<0.7?"weak":""}"><span>${CATS[c].th}</span>
       <span class="track"><i style="width:${v.r/v.n*100}%"></i></span><span class="n">${v.r}/${v.n}</span></div>`).join("")}</div>
-    ${weak.length?`<h2>เรื่องที่ควรทบทวน</h2><div class="advice">${weak.map(([c])=>`<div><b>${CATS[c].th}</b>${CATS[c].tip}</div>`).join("")}</div>`
+    ${weak.length?`<h2>เรื่องที่ควรทบทวน</h2><div class="advice">${weak.map(([c])=>`<div><b>${CATS[c].th}</b>${CATS[c].tip}</div>`).join("")}</div>
+      <p class="sub">รอบถัดไปจะสุ่มหมวดเหล่านี้มาให้มากขึ้น และข้อที่ตอบผิดจะมีโอกาสกลับมาอีก</p>`
       :`<p class="clue">ทำได้ดีทุกหมวด ลองจับเวลาให้ได้ข้อละไม่เกิน 15 วินาทีดู</p>`}
     ${wrong.length?`<p class="sub">ข้อที่ผิด: ${wrong.map(j=>START+j).join(", ")} กดเลขในกระดาษคำตอบเพื่อดูเฉลยอีกครั้ง</p>`:""}
-    <div class="nav"><button class="btn" id="retry-wrong" ${wrong.length?"":"disabled"}>ทำเฉพาะข้อที่ผิดใหม่</button>
-      <button class="btn primary" id="restart">เริ่มใหม่ทั้งหมด</button></div>`;
+    <div class="nav"><button class="btn" id="retry-wrong" ${wrong.length?"":"disabled"}>ทำข้อที่ผิดใหม่</button>
+      <button class="btn primary" id="again">สุ่มชุดใหม่</button></div>`;
   $("result").hidden = false;
   $("result").scrollIntoView({behavior:"smooth", block:"start"});
-  $("restart").onclick = ()=>{ list.forEach(j=>{state.ans[j]=null; state.qTime[j]=0;}); state.i=list[0]; state.t0=Date.now(); $("result").hidden=true; render(); };
-  $("retry-wrong").onclick = ()=>{ wrong.forEach(j=>{state.ans[j]=null; state.qTime[j]=0;}); state.i=wrong[0]; $("result").hidden=true; render(); };
+  $("again").onclick = ()=>newRound();
+  $("retry-wrong").onclick = ()=>{ wrong.forEach(j=>{ round.ans[j]=null; round.qTime[j]=0; }); round.i = wrong[0]; round.done = false; $("result").hidden = true; saveRound(); render(); };
+  renderHistory();
+}
+function renderHistory(){
+  if(!history.length){ $("history-card").hidden = true; return; }
+  $("history-card").hidden = false;
+  $("hist").innerHTML = `<tr><th>รอบ</th><th>วันที่</th><th>คะแนน</th><th>เวลาเฉลี่ย</th><th>ที่มา</th></tr>` +
+    history.slice(-10).reverse().map(h=>`<tr><td class="num">${h.no}</td><td class="num">${h.date}</td>
+      <td class="num">${h.score}/${h.total} (${Math.round(h.score/h.total*100)}%)</td><td class="num">${h.avg} วิ</td>
+      <td>${h.src==="claude"?"Claude สร้าง":"คลังข้อสอบ"}</td></tr>`).join("");
 }
 
+/* ---------- new-round button: confirm when a round is half done ---------- */
+let armed = false;
+$("new-round").onclick = ()=>{
+  const started = round.ans.some(a=>a!==null) && !round.done;
+  if(started && !armed){ armed = true; $("new-round").textContent = "กดอีกครั้งเพื่อทิ้งรอบนี้"; setTimeout(()=>{ armed=false; $("new-round").textContent="สุ่มชุดใหม่"; }, 4000); return; }
+  armed = false; $("new-round").textContent = "สุ่มชุดใหม่"; newRound();
+};
+
+/* ---------- Claude-written rounds (optional) ---------- */
+function status(msg, err){ $("status").textContent = msg; $("status").classList.toggle("err", !!err); }
+const ALLOWED = /&lt;(\/?)(b|i|u)&gt;/g;
+const safe = s => esc(s).replace(ALLOWED, "<$1$2>");
+function validate(o){
+  if(!o || !CATS[o.c] || typeof o.s!=="string" || o.s.split("___").length!==2) return null;
+  if(!Array.isArray(o.o) || o.o.length!==4 || new Set(o.o).size!==4 || !o.o.every(x=>typeof x==="string" && x.trim())) return null;
+  if(![0,1,2,3].includes(o.a) || typeof o.why!=="string" || typeof o.clue!=="string") return null;
+  return {c:o.c, s:o.s.trim(), o:o.o.map(x=>x.trim()), a:o.a, clue:safe(o.clue), why:safe(o.why),
+    traps:(Array.isArray(o.traps)?o.traps:[]).filter(t=>typeof t==="string").slice(0,4).map(safe), ai:true};
+}
+function prompt(q){
+  const mix = Object.entries(q).map(([c,n])=>`${c}: ${n}`).join(", ");
+  const recent = pool().slice(-40).map(x=>x.s).join("\n");
+  return `You write TOEIC Reading Part 5 (Incomplete Sentences) questions that match the real ETS test.
+Rules:
+- Workplace and business contexts: offices, HR, hotels, travel, shipping, retail, finance, manufacturing, emails and notices. Use realistic names of people and companies.
+- One blank per sentence, written exactly as ___ (three underscores). 12 to 25 words per sentence.
+- Four options. Exactly one is correct, and it must be clearly correct in grammar and meaning. Distractors must be plausible: the same word family for word-form items, similar meanings for vocabulary items, related forms for tense items.
+- Real TOEIC difficulty (intermediate, target score 500-750). Vary the position of the correct answer.
+
+Write exactly 30 questions with this category mix: ${mix}.
+Category codes: form = word form (noun/adj/adv/verb), vocab = vocabulary and collocation, tense = tense or active/passive, prep = preposition, conj = conjunction or connector, pron = pronoun or relative pronoun, agree = subject-verb agreement, comp = comparison, ving = gerund or to-infinitive.
+
+Do not reuse these existing sentences:
+${recent}
+
+Output format: JSON Lines only. One JSON object per line, nothing else: no array brackets, no markdown fences, no commentary.
+{"c":"form","s":"The ___ of the new plant will create 300 jobs.","o":["construct","constructive","construction","constructively"],"a":2,"clue":"...","why":"...","traps":["..."]}
+"a" is the 0-based index of the correct option.
+"clue", "why" and each item in "traps" are written in Thai for a Thai learner (English words allowed for the options and grammar terms):
+- clue: the signal in the sentence to look at, with the rule, for example "<b>the ___ of</b> → ตำแหน่งนี้ต้องเป็นคำนาม". You may use <b></b>.
+- why: why the answer is right and what the sentence means.
+- traps: one or two short notes on why tempting distractors are wrong.
+Before writing each line, check that exactly one option fits.`;
+}
+
+let ctl = null;
+async function setupClaude(){
+  const sample = await window.claude?.use?.("sample");
+  if(!sample) return;
+  $("gen").hidden = false;
+  $("gen").onclick = async ()=>{
+    const started = round.ans.some(a=>a!==null) && !round.done;
+    $("gen").disabled = true; $("new-round").disabled = true; $("stop").hidden = false;
+    ctl = new AbortController();
+    const q = quota();
+    status("Claude กำลังคิดข้อสอบ อาจใช้เวลา 1–3 นาที" + (started ? " รอบที่ทำอยู่จะถูกแทนที่เมื่อเสร็จ" : ""));
+    try{
+      const {text} = await sample(prompt(q), {
+        modelTier:"default", signal:ctl.signal, cache:false,
+        onText:({text})=>{ const k = (text.match(/^\s*\{/gm)||[]).length; status(`Claude กำลังเขียนข้อสอบ… ได้แล้ว ${Math.min(k,30)}/30 ข้อ`); }
+      });
+      finishGen(text);
+    }catch(e){
+      if(e && e.text) finishGen(e.text, true);
+      else status({not_granted:"ยังไม่ได้อนุญาตให้หน้านี้ใช้ Claude ใช้ปุ่มสุ่มชุดใหม่จากคลังข้อสอบแทนได้", rate_limited:"ใช้ Claude ถี่เกินไป รอสักครู่แล้วลองใหม่", cancelled:"หยุดแล้ว"}[e?.code] || "สร้างข้อสอบไม่สำเร็จ ลองอีกครั้ง หรือใช้ปุ่มสุ่มชุดใหม่", e?.code!=="cancelled");
+    }finally{
+      $("gen").disabled = false; $("new-round").disabled = false; $("stop").hidden = true; ctl = null;
+    }
+  };
+  $("stop").onclick = ()=>ctl?.abort();
+}
+function finishGen(text, partial){
+  const seen = new Set(pool().map(q=>q.s)), got = [];
+  text.split("\n").forEach(line=>{
+    const t = line.trim().replace(/,$/,""); if(!t.startsWith("{")) return;
+    try{ const v = validate(JSON.parse(t)); if(v && !seen.has(v.s)){ seen.add(v.s); got.push(v); } }catch{}
+  });
+  if(!got.length){ status("Claude ส่งข้อสอบกลับมาในรูปแบบที่อ่านไม่ได้ ลองกดอีกครั้ง", true); return; }
+  gen = [...gen, ...got].slice(-300); store.set("p5.gen", gen);
+  newRound(got.slice(0,SIZE), "claude");
+  status(`ได้ข้อใหม่จาก Claude ${got.length} ข้อ${got.length<SIZE?` เติมจากคลังอีก ${SIZE-got.length} ข้อ`:""} ข้อเหล่านี้เก็บเข้าคลังแล้ว คลังตอนนี้มี ${pool().length} ข้อ`);
+}
+
+/* ---------- timer + boot ---------- */
 setInterval(()=>{
-  const s = Math.round((Date.now()-state.qStart)/1000);
-  const t = $("timer");
-  if(state.ans[state.i]!==null){ t.textContent = "ข้อนี้ "+state.qTime[state.i]+" วิ"; t.classList.remove("over"); return; }
+  const t = $("timer"), i = round.i;
+  if(round.ans[i]!==null){ t.textContent = "ข้อนี้ "+round.qTime[i]+" วิ"; t.classList.remove("over"); return; }
+  const s = Math.round((Date.now()-qStart)/1000);
   t.textContent = "ข้อนี้ "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
   t.classList.toggle("over", s>TARGET);
-},500);
+}, 500);
 
-renderTabs(); render();
+const saved = store.get("p5.round", null);
+if(saved && Array.isArray(saved.qs) && saved.qs.length && !saved.done){ round = saved; render(); }
+else newRound();
+renderHistory();
+status(`คลังข้อสอบมี ${pool().length} ข้อ`);
+setupClaude();
 </script>
