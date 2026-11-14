@@ -1,0 +1,443 @@
+<title>TOEIC Part 5 Drill</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one narrow answer-sheet column; question on top, OMR-style bubbles below, results replace it at the end */
+:root{
+  --bg:#f3f5f8; --paper:#ffffff; --ink:#1b2230; --muted:#5d6879; --line:#d9dee7;
+  --sheet:#c2410c;        /* answer-sheet print colour */
+  --sheet-soft:#fff1ea;
+  --graphite:#2b3240;     /* filled pencil bubble */
+  --ok:#15803d; --ok-soft:#e7f6ec; --bad:#b91c1c; --bad-soft:#fdecec;
+  --font-body:"IBM Plex Sans Thai",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151b; --paper:#1a1f28; --ink:#e7eaf0; --muted:#9aa4b4; --line:#2e3542;
+  --sheet:#fb8a52; --sheet-soft:#2b1d16; --graphite:#e7eaf0;
+  --ok:#4ade80; --ok-soft:#14261b; --bad:#f87171; --bad-soft:#2c1717; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151b; --paper:#1a1f28; --ink:#e7eaf0; --muted:#9aa4b4; --line:#2e3542;
+  --sheet:#fb8a52; --sheet-soft:#2b1d16; --graphite:#e7eaf0;
+  --ok:#4ade80; --ok-soft:#14261b; --bad:#f87171; --bad-soft:#2c1717; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding-block:24px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--sheet)}
+h1{margin:0;font-size:28px;line-height:1.25;text-wrap:balance}
+.sub{margin:0;color:var(--muted);font-size:15px}
+
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--font-mono);font-size:13px;color:var(--muted)}
+.bar .grow{flex:1;min-width:120px;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar .fill{height:100%;background:var(--sheet);width:0;transition:width .25s}
+.timer.over{color:var(--bad)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:4px 12px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--sheet);background:var(--sheet-soft);color:var(--sheet);font-weight:600}
+
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:18px}
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.qno{font-family:var(--font-mono);font-weight:600;color:var(--sheet);font-size:15px}
+.tag{font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:4px;padding:1px 8px}
+.stem{font-size:19px;line-height:1.65;margin:0}
+.blank{display:inline-block;min-width:5.5em;border-bottom:2px solid var(--ink);text-align:center;font-weight:600}
+.blank.ok{color:var(--ok);border-color:var(--ok)}
+.blank.bad{color:var(--bad);border-color:var(--bad)}
+
+.opts{display:grid;gap:8px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font:inherit;font-size:17px;color:var(--ink);
+  background:transparent;border:1px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--sheet)}
+.opt:focus-visible,.chip:focus-visible,.btn:focus-visible,.cell:focus-visible{outline:2px solid var(--sheet);outline-offset:2px}
+.bubble{flex:none;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--sheet);color:var(--sheet);
+  display:grid;place-items:center;font-family:var(--font-mono);font-size:13px;font-weight:600}
+.opt.picked .bubble{background:var(--graphite);border-color:var(--graphite);color:var(--paper)}
+.opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+.opt.correct .bubble{background:var(--ok);border-color:var(--ok);color:var(--paper)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+
+.feedback{border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px}
+.verdict{font-weight:700;font-size:17px}
+.verdict.ok{color:var(--ok)} .verdict.bad{color:var(--bad)}
+.feedback p{margin:0}
+.clue{background:var(--sheet-soft);border-radius:6px;padding:10px 12px;font-size:15px}
+.clue b{color:var(--sheet)}
+.why{font-size:15px;color:var(--ink)}
+.why ul{margin:6px 0 0;padding-left:20px;color:var(--muted)}
+
+.nav{display:flex;justify-content:space-between;gap:10px}
+.btn{font:inherit;font-weight:600;font-size:15px;padding:10px 18px;border-radius:8px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.btn.primary{background:var(--sheet);border-color:var(--sheet);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+
+.grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.cell{font:inherit;font-family:var(--font-mono);font-size:12px;padding:6px 0;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer}
+.cell.now{border-color:var(--sheet);color:var(--sheet);font-weight:600}
+.cell.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.cell.bad{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+@media (max-width:480px){.grid{grid-template-columns:repeat(6,1fr)}.stem{font-size:17px}.card{padding:16px}}
+
+.score{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.score .big{font-family:var(--font-mono);font-size:44px;font-weight:600;color:var(--sheet);line-height:1}
+.score span{color:var(--muted)}
+.cats{display:grid;gap:10px}
+.cat{display:grid;grid-template-columns:minmax(0,10em) 1fr 3.5em;gap:10px;align-items:center;font-size:14px}
+.cat .track{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.cat .track i{display:block;height:100%;background:var(--ok)}
+.cat.weak .track i{background:var(--bad)}
+.cat .n{font-family:var(--font-mono);text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.advice{display:grid;gap:10px}
+.advice div{border-left:3px solid var(--bad);padding:4px 0 4px 12px;font-size:15px}
+.advice b{display:block}
+h2{margin:0;font-size:18px}
+.tips{margin:0;padding-left:20px;display:grid;gap:4px;font-size:15px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Reading · Part 5 · Incomplete Sentences</div>
+    <h1>ฝึกทำข้อสอบ TOEIC Part 5</h1>
+    <p class="sub">30 ข้อ (101–130) เหมือนข้อสอบจริง เป้าหมายคือข้อละไม่เกิน 20 วินาที ตอบแล้วจะเห็นเฉลยและวิธีคิดทันที</p>
+  </header>
+
+  <div class="tabs" role="group" aria-label="เลือกหมวด">
+    <button class="chip" data-filter="all" aria-pressed="true" id="f-all">ทุกหมวด</button>
+  </div>
+
+  <div class="bar">
+    <span id="pos">101 / 130</span>
+    <div class="grow"><div class="fill" id="fill"></div></div>
+    <span class="timer" id="timer">0:00</span>
+  </div>
+
+  <section id="quiz" class="card" aria-live="polite"></section>
+
+  <div class="nav">
+    <button class="btn" id="prev">ก่อนหน้า</button>
+    <button class="btn primary" id="next">ข้อถัดไป</button>
+  </div>
+
+  <div class="grid" id="grid" aria-label="กระดาษคำตอบ"></div>
+
+  <section id="result" class="card" hidden></section>
+
+  <section class="card">
+    <h2>ทริคทำ Part 5 ให้ทัน</h2>
+    <ol class="tips">
+      <li>ดูตัวเลือกก่อนอ่านโจทย์ ถ้าเป็นรากคำเดียวกัน (success / successful / successfully) แปลว่าถามชนิดของคำ ดูแค่คำหน้า-หลังช่องว่างก็พอ</li>
+      <li>ถ้าตัวเลือกเป็นกริยาคนละรูป ให้หาคำบอกเวลา (since, by the time, next Monday) และเช็กว่าประธานทำเองหรือถูกกระทำ</li>
+      <li>ช่องว่างตามด้วยคำนาม → ใช้ preposition (despite, because of) ตามด้วยประโยค → ใช้ conjunction (although, because)</li>
+      <li>ข้อคำศัพท์ให้ดูคำที่มาคู่กัน (comply <u>with</u>, take <u>effect</u>, out of <u>stock</u>) อย่าแปลทั้งประโยค</li>
+      <li>ข้อไหนเกิน 30 วินาที ให้เดาแล้วไปต่อ เก็บเวลาไว้ทำ Part 7</li>
+    </ol>
+  </section>
+</div>
+
+<script>
+const CATS = {
+  form:  {th:"ชนิดของคำ (Word form)", tip:"ดูตำแหน่งช่องว่าง: หลัง the/a/adj → นาม, ก่อนนาม → adj, ขยายกริยาหรือ adj → adv"},
+  tense: {th:"Tense / Active-Passive", tip:"หาคำบอกเวลาก่อน แล้วถามว่าประธาน 'ทำเอง' หรือ 'ถูกทำ' (ถูกทำ = be + V3)"},
+  agree: {th:"การผันกริยาตามประธาน", tip:"Each / Every / One of ... ใช้กริยาเอกพจน์เสมอ"},
+  prep:  {th:"Preposition", tip:"by = ภายในเส้นตาย, until = ต่อเนื่องถึง, between = ระหว่าง 2 สิ่ง, during + นาม"},
+  conj:  {th:"Conjunction / คำเชื่อม", tip:"แยกให้ได้ว่าหลังช่องว่างเป็นประโยค (มีกริยา) หรือเป็นแค่คำนาม"},
+  pron:  {th:"Pronoun / Relative", tip:"ก่อนนามใช้ his/her/their, ประธานกับกรรมเป็นคนเดียวกันใช้ -self, ตามด้วยนามที่เป็นเจ้าของใช้ whose"},
+  comp:  {th:"การเปรียบเทียบ", tip:"มี than → ขั้นกว่า (-er / more), มี the + of all / in → ขั้นสุด (-est / most)"},
+  ving:  {th:"Gerund / To-infinitive", tip:"จำกริยาที่ตามด้วย V-ing: consider, avoid, suggest, enjoy, look forward to"},
+  vocab: {th:"คำศัพท์ / Collocation", tip:"จำเป็นคู่: comply with, take effect, out of stock, proof of purchase"},
+};
+
+// a = index of correct answer. clue = what to look at. why = explanation. traps = why other options are wrong.
+const Q = [
+ {c:"form", s:"The new software has significantly improved the ___ of our customer service team.",
+  o:["efficient","efficiently","efficiency","more efficient"], a:2,
+  clue:"<b>the ___ of</b> → ตรงกลางระหว่าง the กับ of ต้องเป็นคำนาม",
+  why:"efficiency (n.) = ประสิทธิภาพ แปลว่า ซอฟต์แวร์ใหม่ช่วยเพิ่มประสิทธิภาพของทีม",
+  traps:["efficient / more efficient เป็น adj ใช้ขยายนาม ไม่ใช่ตัวนาม","efficiently เป็น adv"]},
+ {c:"form", s:"Ms. Tanaka ___ reviewed the contract before signing it.",
+  o:["careful","carefully","care","carefulness"], a:1,
+  clue:"<b>ประธาน + ___ + กริยา (reviewed)</b> → ช่องหน้ากริยาใช้ adverb",
+  why:"carefully = อย่างระมัดระวัง ขยายกริยา reviewed",
+  traps:["careful เป็น adj ขยายกริยาไม่ได้","care / carefulness เป็นนาม วางตรงนี้ไม่ได้"]},
+ {c:"form", s:"All employees must submit their expense reports in a ___ manner.",
+  o:["time","timely","timing","timed"], a:1,
+  clue:"<b>a ___ manner</b> → ก่อนนาม manner ต้องเป็น adjective",
+  why:"timely เป็น adjective (แปลว่า ตรงเวลา) ถึงจะลงท้ายด้วย -ly ก็ไม่ใช่ adverb ข้อนี้เป็นกับดักที่ออกบ่อย",
+  traps:["คำ -ly ที่เป็น adj ที่ควรจำ: timely, friendly, costly, likely, orderly"]},
+ {c:"form", s:"The marketing campaign was highly ___ in attracting younger customers.",
+  o:["success","succeed","successful","successfully"], a:2,
+  clue:"<b>was highly ___</b> → หลัง be + adverb (highly) ต้องเป็น adjective",
+  why:"successful (adj.) = ประสบความสำเร็จ highly เป็น adv ที่มาขยาย adj ตัวนี้",
+  traps:["successfully เป็น adv ใช้กับ be ไม่ได้","success เป็นนาม, succeed เป็นกริยา"]},
+ {c:"form", s:"Please read the instructions ___ before assembling the furniture.",
+  o:["thorough","thoroughly","thoroughness","more thorough"], a:1,
+  clue:"<b>read the instructions ___</b> → ประโยคครบแล้ว (S + V + O) ช่องท้ายเติมได้แค่ adverb",
+  why:"thoroughly = อย่างละเอียด ขยายกริยา read",
+  traps:["ถ้าประโยคครบแล้วมีช่องว่างตามหลัง ให้นึกถึง adverb ก่อน"]},
+
+ {c:"tense", s:"By the time the CEO arrives, the staff ___ the conference room.",
+  o:["prepare","will have prepared","has prepared","preparing"], a:1,
+  clue:"<b>By the time + present simple</b> → อีกประโยคใช้ future perfect (will have + V3)",
+  why:"แปลว่า ก่อนที่ CEO จะมาถึง พนักงานจะเตรียมห้องเสร็จไว้แล้ว",
+  traps:["By the time + past simple → past perfect (had + V3)"]},
+ {c:"tense", s:"The quarterly report ___ to all shareholders next Monday.",
+  o:["sends","will send","will be sent","sending"], a:2,
+  clue:"<b>ประธานเป็นสิ่งของ (report) + ไม่มีกรรมตามหลัง</b> → passive, <b>next Monday</b> → อนาคต",
+  why:"รายงานส่งตัวเองไม่ได้ ต้อง 'ถูกส่ง' จึงใช้ will be sent",
+  traps:["will send เป็น active ต้องมีกรรมตามหลัง เช่น will send the report"]},
+ {c:"tense", s:"Mr. Lee ___ for Hanson Corporation since 2019.",
+  o:["works","has worked","is working","will work"], a:1,
+  clue:"<b>since + จุดเวลา</b> → present perfect (has/have + V3)",
+  why:"ทำงานมาตั้งแต่ปี 2019 จนถึงตอนนี้",
+  traps:["for + ช่วงเวลา (for five years) ก็ใช้ present perfect เหมือนกัน"]},
+ {c:"tense", s:"Applications ___ after March 31 will not be considered.",
+  o:["receive","receiving","received","receives"], a:2,
+  clue:"<b>กริยาหลักคือ will not be considered</b> → ช่องว่างเป็นส่วนขยายนาม และใบสมัคร 'ถูกรับ'",
+  why:"ย่อมาจาก Applications (which are) received after March 31 ใช้ V3 เพราะเป็นความหมาย passive",
+  traps:["V-ing ใช้เมื่อนามทำเอง เช่น employees working overtime","ประโยคมีกริยาหลักได้ตัวเดียว ถ้ามีแล้ว ช่องว่างมักเป็น V-ing หรือ V3"]},
+ {c:"agree", s:"Each of the participants ___ a certificate upon completion of the workshop.",
+  o:["receive","receives","receiving","have received"], a:1,
+  clue:"<b>Each of + นามพหูพจน์</b> → ประธานจริงคือ Each ซึ่งเป็นเอกพจน์",
+  why:"ใช้กริยาเติม s: receives",
+  traps:["อย่าดูที่ participants ซึ่งอยู่หลัง of","have received ผันตามพหูพจน์ จึงผิด"]},
+
+ {c:"prep", s:"The office will be closed ___ the national holiday.",
+  o:["while","during","among","although"], a:1,
+  clue:"<b>หลังช่องว่างเป็นนาม (the national holiday)</b> → ต้องใช้ preposition",
+  why:"during + นาม = ในระหว่าง",
+  traps:["while ความหมายเดียวกัน แต่เป็น conjunction ต้องตามด้วยประโยค","although เป็น conjunction"]},
+ {c:"prep", s:"Please submit your proposal ___ Friday at 5 P.M.",
+  o:["by","until","within","among"], a:0,
+  clue:"<b>submit (ทำครั้งเดียวจบ) + เส้นตาย</b> → by",
+  why:"by = ไม่เกิน/ภายใน ใช้กับเดดไลน์",
+  traps:["until ใช้กับการกระทำที่ทำต่อเนื่องไปจนถึงเวลานั้น เช่น The store is open until 9 P.M.","within ต้องตามด้วยช่วงเวลา เช่น within three days"]},
+ {c:"prep", s:"The museum is located ___ the train station and the city library.",
+  o:["among","between","across","through"], a:1,
+  clue:"<b>___ A and B</b> → between ... and ...",
+  why:"ตั้งอยู่ระหว่างสถานีรถไฟกับห้องสมุด",
+  traps:["among ใช้กับ 3 สิ่งขึ้นไปที่ไม่ระบุทีละตัว"]},
+
+ {c:"conj", s:"___ the weather was bad, the outdoor event went ahead as planned.",
+  o:["Despite","Although","However","Because of"], a:1,
+  clue:"<b>หลังช่องว่างเป็นประโยค (the weather was bad)</b> + ความหมายขัดแย้ง → Although",
+  why:"ถึงแม้อากาศไม่ดี งานกลางแจ้งก็ยังจัดตามแผน",
+  traps:["Despite / Because of ตามด้วยนามเท่านั้น","However เป็น adverb ต้องมีจุดหรือ ; คั่นประโยค"]},
+ {c:"conj", s:"___ heavy traffic, Ms. Garcia arrived at the meeting on time.",
+  o:["Although","Even though","In spite of","Whereas"], a:2,
+  clue:"<b>หลังช่องว่างเป็นนาม (heavy traffic)</b> → ต้องใช้ preposition",
+  why:"In spite of + นาม = แม้ว่า",
+  traps:["ข้อนี้คู่กับข้อก่อนหน้า ความหมายเหมือนกันแต่โครงสร้างต่างกัน Although/Even though/Whereas ต้องตามด้วยประโยค"]},
+ {c:"conj", s:"Customers can pay ___ by credit card or by bank transfer.",
+  o:["both","either","neither","whether"], a:1,
+  clue:"<b>___ ... or ...</b> → either ... or",
+  why:"either A or B = A หรือ B อย่างใดอย่างหนึ่ง",
+  traps:["both คู่กับ and","neither คู่กับ nor"]},
+ {c:"conj", s:"Please contact the front desk ___ you need any assistance during your stay.",
+  o:["if","unless","so that","despite"], a:0,
+  clue:"<b>เงื่อนไข</b>: ติดต่อแผนกต้อนรับ <i>ถ้า</i> ต้องการความช่วยเหลือ",
+  why:"if = ถ้า",
+  traps:["unless = ถ้าไม่ ทำให้ความหมายกลับด้าน","so that = เพื่อที่จะ ไม่เข้ากับความหมาย","despite ตามด้วยนาม"]},
+
+ {c:"pron", s:"The manager asked the interns to complete the training modules by ___.",
+  o:["they","them","their","themselves"], a:3,
+  clue:"<b>by + -self</b> = ด้วยตัวเอง",
+  why:"by themselves = ทำเองโดยไม่มีคนช่วย",
+  traps:["by them แปลว่า 'โดยพวกเขา' ในความหมาย passive ไม่ใช่ความหมายนี้"]},
+ {c:"pron", s:"Ms. Patel and ___ assistant will attend the trade fair in Singapore.",
+  o:["she","her","hers","herself"], a:1,
+  clue:"<b>___ + นาม (assistant)</b> → ต้องใช้คำแสดงความเป็นเจ้าของ",
+  why:"her assistant = ผู้ช่วยของเธอ",
+  traps:["hers ใช้แทนทั้งนามและไม่มีนามตามหลัง เช่น The bag is hers"]},
+ {c:"pron", s:"The candidate ___ résumé impressed the committee will be interviewed tomorrow.",
+  o:["who","whom","whose","which"], a:2,
+  clue:"<b>คน + ___ + นาม (résumé)</b> → whose",
+  why:"whose = ของผู้ซึ่ง ผู้สมัคร<i>ที่เรซูเม่ของเขา</i>สร้างความประทับใจ",
+  traps:["who / whom ตามด้วยนามโดยตรงไม่ได้"]},
+ {c:"pron", s:"The Grand Hotel, ___ was renovated last year, now offers free Wi-Fi.",
+  o:["that","which","where","what"], a:1,
+  clue:"<b>มีลูกน้ำ (,) คั่น + สิ่งของ</b> → which",
+  why:"หลังลูกน้ำห้ามใช้ that",
+  traps:["where ใช้เมื่อหลังช่องว่างเป็นประโยคที่ครบแล้ว (มีประธาน) แต่ข้อนี้ไม่มีประธาน","what ไม่ใช้ขยายนามข้างหน้า"]},
+
+ {c:"comp", s:"This year's sales figures are ___ than last year's.",
+  o:["high","higher","highest","highly"], a:1,
+  clue:"<b>than</b> → ขั้นกว่า",
+  why:"higher than = สูงกว่า",
+  traps:["highly เป็น adv แปลว่า อย่างมาก (highly recommended)"]},
+ {c:"comp", s:"Of all the applicants, Mr. Kim has the ___ experience in project management.",
+  o:["more","most","much","many"], a:1,
+  clue:"<b>Of all ... the ___</b> → ขั้นสุด",
+  why:"the most experience = ประสบการณ์มากที่สุด",
+  traps:["many ใช้กับนามนับได้ แต่ experience (ประสบการณ์) นับไม่ได้"]},
+ {c:"comp", s:"The new model is ___ more reliable than the previous version.",
+  o:["very","much","so","too"], a:1,
+  clue:"<b>___ + more + adj + than</b> → ขยายขั้นกว่าด้วย much / far / significantly",
+  why:"much more reliable = น่าเชื่อถือกว่ามาก",
+  traps:["very ใช้ขยายขั้นกว่าไม่ได้ (very more ผิด)"]},
+
+ {c:"ving", s:"The company is considering ___ a new branch in Chiang Mai.",
+  o:["open","to open","opening","opened"], a:2,
+  clue:"<b>consider + V-ing</b>",
+  why:"กำลังพิจารณาเปิดสาขาใหม่",
+  traps:["กริยาที่ตามด้วย to-V: plan, decide, hope, agree, want"]},
+ {c:"ving", s:"We look forward to ___ with you on this project.",
+  o:["work","working","worked","be working"], a:1,
+  clue:"<b>look forward to + V-ing</b> (to ตรงนี้เป็น preposition)",
+  why:"เป็นประโยคท้ายอีเมลที่เจอบ่อยมาก",
+  traps:["to ที่เป็น preposition: look forward to, be committed to, be dedicated to, object to → ตามด้วย V-ing"]},
+
+ {c:"vocab", s:"Please keep your receipt as ___ of purchase.",
+  o:["proof","reason","result","cause"], a:0,
+  clue:"<b>proof of purchase</b> = หลักฐานการซื้อ",
+  why:"เป็นวลีที่ออกบ่อยในข้อสอบเรื่องการคืนสินค้า",
+  traps:[]},
+ {c:"vocab", s:"The airline apologized for the ___ caused by the delayed flight.",
+  o:["inconvenience","disadvantage","inability","impatience"], a:0,
+  clue:"<b>apologize for the inconvenience</b> = ขออภัยในความไม่สะดวก",
+  why:"วลีนี้เจอในประกาศและอีเมลเกือบทุกชุดข้อสอบ",
+  traps:["disadvantage = ข้อเสีย, inability = ความไม่สามารถ, impatience = ความใจร้อน"]},
+ {c:"vocab", s:"Due to high demand, the product is temporarily out of ___.",
+  o:["supply","stock","order","store"], a:1,
+  clue:"<b>out of stock</b> = สินค้าหมด",
+  why:"ความต้องการสูง สินค้าจึงหมดชั่วคราว",
+  traps:["out of order = เสีย ใช้งานไม่ได้ (ใช้กับเครื่องจักร ลิฟต์)"]},
+ {c:"vocab", s:"The new policy will take ___ on January 1.",
+  o:["effect","affect","action","part"], a:0,
+  clue:"<b>take effect</b> = มีผลบังคับใช้",
+  why:"นโยบายใหม่มีผลวันที่ 1 มกราคม",
+  traps:["affect เป็นกริยา (ส่งผลต่อ) effect เป็นนาม","take part (in) = เข้าร่วม"]},
+ {c:"vocab", s:"All visitors must ___ with the safety regulations while on the factory floor.",
+  o:["follow","comply","obey","observe"], a:1,
+  clue:"<b>___ with</b> → comply with = ปฏิบัติตาม",
+  why:"ความหมายของทั้ง 4 ตัวคล้ายกัน แต่มีแค่ comply ที่ต้องมี with",
+  traps:["follow / obey / observe ตามด้วยกรรมได้เลย ไม่ต้องมี with"]},
+];
+
+const N = Q.length, START = 101, TARGET = 20;
+const state = {i:0, ans:Array(N).fill(null), filter:"all", t0:Date.now(), qStart:Date.now(), qTime:Array(N).fill(0)};
+const $ = id => document.getElementById(id);
+const L = ["A","B","C","D"];
+
+function visible(){ return Q.map((q,i)=>i).filter(i => state.filter==="all" || Q[i].c===state.filter); }
+
+function renderTabs(){
+  const box = document.querySelector(".tabs");
+  Object.entries(CATS).forEach(([k,v])=>{
+    const n = Q.filter(q=>q.c===k).length;
+    const b = document.createElement("button");
+    b.className="chip"; b.dataset.filter=k; b.id="f-"+k; b.setAttribute("aria-pressed","false");
+    b.textContent = v.th.split(" (")[0] + " · " + n;
+    box.appendChild(b);
+  });
+  box.addEventListener("click", e=>{
+    const b = e.target.closest(".chip"); if(!b) return;
+    state.filter = b.dataset.filter;
+    box.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c===b));
+    state.i = visible()[0]; $("result").hidden = true; render();
+  });
+}
+
+function render(){
+  const i = state.i, q = Q[i], pick = state.ans[i], done = pick!==null;
+  const list = visible(), k = list.indexOf(i);
+  $("pos").textContent = `${START+i} · ข้อที่ ${k+1} จาก ${list.length}`;
+  $("fill").style.width = (list.filter(j=>state.ans[j]!==null).length / list.length*100)+"%";
+  const blank = done ? `<span class="blank ${pick===q.a?"ok":"bad"}">${q.o[q.a]}</span>` : `<span class="blank">&nbsp;</span>`;
+  $("quiz").innerHTML = `
+    <div class="qhead"><span class="qno">${START+i}.</span><span class="tag">${CATS[q.c].th}</span></div>
+    <p class="stem">${q.s.replace("___", blank)}</p>
+    <div class="opts">${q.o.map((o,j)=>{
+      let cls="opt";
+      if(done){ if(j===q.a) cls+=" correct"; else if(j===pick) cls+=" wrong picked"; }
+      return `<button class="${cls}" data-j="${j}" ${done?"disabled":""} id="opt-${i}-${j}"><span class="bubble">${L[j]}</span><span>${o}</span></button>`;
+    }).join("")}</div>
+    ${done ? `<div class="feedback">
+      <div class="verdict ${pick===q.a?"ok":"bad"}">${pick===q.a?"ถูกต้อง":"ยังไม่ถูก คำตอบคือ ("+L[q.a]+") "+q.o[q.a]}
+        <span style="font-weight:400;color:var(--muted);font-size:14px"> · ใช้เวลา ${state.qTime[i]} วินาที${state.qTime[i]>TARGET?" (เกินเป้า 20 วิ)":""}</span></div>
+      <p class="clue">${q.clue}</p>
+      <div class="why">${q.why}${q.traps.length?`<ul>${q.traps.map(t=>`<li>${t}</li>`).join("")}</ul>`:""}</div>
+    </div>`:""}`;
+  $("prev").disabled = k<=0;
+  const answered = list.every(j=>state.ans[j]!==null);
+  $("next").textContent = k===list.length-1 ? "ดูผลคะแนน" : "ข้อถัดไป";
+  $("next").disabled = k===list.length-1 && !answered;
+  renderGrid();
+  state.qStart = Date.now();
+}
+
+function renderGrid(){
+  const list = visible();
+  $("grid").innerHTML = list.map(j=>{
+    let cls="cell"; if(j===state.i) cls+=" now";
+    if(state.ans[j]!==null) cls+= state.ans[j]===Q[j].a?" ok":" bad";
+    return `<button class="${cls}" data-j="${j}" id="cell-${j}" aria-label="ข้อ ${START+j}">${START+j}</button>`;
+  }).join("");
+}
+
+$("quiz").addEventListener("click", e=>{
+  const b = e.target.closest(".opt"); if(!b || b.disabled) return;
+  const i = state.i;
+  state.qTime[i] = Math.max(1, Math.round((Date.now()-state.qStart)/1000));
+  state.ans[i] = +b.dataset.j; render();
+});
+$("grid").addEventListener("click", e=>{
+  const b = e.target.closest(".cell"); if(!b) return;
+  state.i = +b.dataset.j; $("result").hidden = true; render();
+});
+$("prev").onclick = ()=>{ const l=visible(), k=l.indexOf(state.i); if(k>0){state.i=l[k-1]; render();} };
+$("next").onclick = ()=>{
+  const l=visible(), k=l.indexOf(state.i);
+  if(k<l.length-1){ state.i=l[k+1]; render(); }
+  else showResult();
+};
+document.addEventListener("keydown", e=>{
+  if(e.target.matches("input,textarea")) return;
+  const m = {a:0,b:1,c:2,d:3}[e.key.toLowerCase()];
+  if(m!==undefined && state.ans[state.i]===null){ $(`opt-${state.i}-${m}`)?.click(); }
+  if(e.key==="ArrowRight" || e.key==="Enter"){ if(!$("next").disabled) $("next").click(); }
+  if(e.key==="ArrowLeft"){ $("prev").click(); }
+});
+
+function showResult(){
+  const list = visible();
+  const right = list.filter(j=>state.ans[j]===Q[j].a).length;
+  const secs = list.reduce((s,j)=>s+state.qTime[j],0);
+  const avg = Math.round(secs/list.length);
+  const byCat = {};
+  list.forEach(j=>{ const c=Q[j].c; byCat[c]=byCat[c]||{r:0,n:0}; byCat[c].n++; if(state.ans[j]===Q[j].a) byCat[c].r++; });
+  const weak = Object.entries(byCat).filter(([,v])=>v.r/v.n<0.7);
+  const wrong = list.filter(j=>state.ans[j]!==Q[j].a);
+  $("result").innerHTML = `
+    <h2>ผลคะแนน</h2>
+    <div class="score"><span class="big">${right}/${list.length}</span>
+      <span>เฉลี่ยข้อละ ${avg} วินาที ${avg<=TARGET?"· ทันเวลาข้อสอบจริง":"· ยังช้ากว่าเป้า 20 วินาที"}</span></div>
+    <div class="cats">${Object.entries(byCat).map(([c,v])=>`
+      <div class="cat ${v.r/v.n<0.7?"weak":""}"><span>${CATS[c].th}</span>
+      <span class="track"><i style="width:${v.r/v.n*100}%"></i></span><span class="n">${v.r}/${v.n}</span></div>`).join("")}</div>
+    ${weak.length?`<h2>เรื่องที่ควรทบทวน</h2><div class="advice">${weak.map(([c])=>`<div><b>${CATS[c].th}</b>${CATS[c].tip}</div>`).join("")}</div>`
+      :`<p class="clue">ทำได้ดีทุกหมวด ลองจับเวลาให้ได้ข้อละไม่เกิน 15 วินาทีดู</p>`}
+    ${wrong.length?`<p class="sub">ข้อที่ผิด: ${wrong.map(j=>START+j).join(", ")} กดเลขในกระดาษคำตอบเพื่อดูเฉลยอีกครั้ง</p>`:""}
+    <div class="nav"><button class="btn" id="retry-wrong" ${wrong.length?"":"disabled"}>ทำเฉพาะข้อที่ผิดใหม่</button>
+      <button class="btn primary" id="restart">เริ่มใหม่ทั้งหมด</button></div>`;
+  $("result").hidden = false;
+  $("result").scrollIntoView({behavior:"smooth", block:"start"});
+  $("restart").onclick = ()=>{ list.forEach(j=>{state.ans[j]=null; state.qTime[j]=0;}); state.i=list[0]; state.t0=Date.now(); $("result").hidden=true; render(); };
+  $("retry-wrong").onclick = ()=>{ wrong.forEach(j=>{state.ans[j]=null; state.qTime[j]=0;}); state.i=wrong[0]; $("result").hidden=true; render(); };
+}
+
+setInterval(()=>{
+  const s = Math.round((Date.now()-state.qStart)/1000);
+  const t = $("timer");
+  if(state.ans[state.i]!==null){ t.textContent = "ข้อนี้ "+state.qTime[state.i]+" วิ"; t.classList.remove("over"); return; }
+  t.textContent = "ข้อนี้ 0:"+String(s).padStart(2,"0");
+  t.classList.toggle("over", s>TARGET);
+},500);
+
+renderTabs(); render();
+</script>
