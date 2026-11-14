@@ -114,7 +114,7 @@ h2{margin:0;font-size:18px}
   <header>
     <div class="eyebrow">Reading · Part 5 · Incomplete Sentences</div>
     <h1>ฝึกทำข้อสอบ TOEIC Part 5</h1>
-    <p class="sub">สุ่มใหม่ทุกรอบ รอบละ 30 ข้อ (101–130) สัดส่วนหมวดตามข้อสอบจริง ข้อที่เคยตอบผิดมีโอกาสถูกสุ่มมาเจออีก ตั้งเป้าข้อละไม่เกิน 20 วินาที</p>
+    <p class="sub">สุ่มใหม่ทุกรอบ รอบละ 30 ข้อ (101–130) สัดส่วนหมวดตามข้อสอบจริง ข้อที่ยังไม่เคยเจอจะออกก่อนเสมอ ตั้งเป้าข้อละไม่เกิน 20 วินาที</p>
   </header>
 
   <div class="controls">
@@ -649,6 +649,127 @@ const Q3 = [
   traps:["more lighter ผิด เพราะ lighter เป็นขั้นกว่าอยู่แล้ว"]},
 ];
 
+const Q4 = [
+ {c:"form", s:"The board approved the ___ of a new branch office in Phuket.", o:["establish","establishment","established","establishes"], a:1,
+  clue:"<b>the ___ of</b> → คำนาม", why:"establishment = การจัดตั้ง", traps:["-ment เป็นคำลงท้ายของคำนาม"]},
+ {c:"form", s:"Visitors must show valid ___ at the reception desk before entering.", o:["identify","identification","identical","identifiable"], a:1,
+  clue:"<b>valid ___</b> → หลัง adj ต้องเป็นคำนาม", why:"identification = บัตรแสดงตัวตน", traps:["identical / identifiable เป็น adj"]},
+ {c:"form", s:"The new attendance policy will ___ affect all part-time staff.", o:["direct","directly","direction","directed"], a:1,
+  clue:"<b>will ___ affect</b> → ระหว่าง will กับกริยา ใช้ adverb", why:"directly = โดยตรง", traps:[]},
+ {c:"form", s:"Our products are ___ priced compared to those of our competitors.", o:["reasonable","reasonably","reason","reasoning"], a:1,
+  clue:"<b>are ___ priced</b> → ขยาย V3 (priced) ใช้ adverb", why:"reasonably priced = ราคาสมเหตุสมผล", traps:["วลีนี้ออกบ่อยในโฆษณาสินค้า"]},
+ {c:"form", s:"The results of the customer survey were very ___.", o:["encourage","encouraging","encouragingly","encouragement"], a:1,
+  clue:"<b>were very ___</b> → be + very + adj", why:"encouraging = น่าพอใจ ให้กำลังใจ", traps:["encouragement เป็นนาม"]},
+ {c:"form", s:"Ms. Hall has been a ___ member of the research team for ten years.", o:["value","valuable","valuably","valuation"], a:1,
+  clue:"<b>a ___ member</b> → ก่อนนามใช้ adj", why:"valuable = มีคุณค่า", traps:[]},
+ {c:"form", s:"All ___ must wear safety helmets in the construction area.", o:["work","workers","worked","workable"], a:1,
+  clue:"<b>All ___ must</b> → ประธานหลัง all เป็นคำนาม (คน)", why:"workers = คนงาน", traps:["work เป็นนามนับไม่ได้ และไม่ใช่คนที่สวมหมวก"]},
+ {c:"form", s:"The software update was installed ___ on all company computers.", o:["success","successful","successfully","succeed"], a:2,
+  clue:"<b>was installed ___</b> → ประโยค passive ครบแล้ว ใช้ adverb", why:"successfully = สำเร็จ", traps:[]},
+ {c:"form", s:"Please send your comments to the editor for ___.", o:["consider","considerate","consideration","considerably"], a:2,
+  clue:"<b>for ___</b> → หลัง preposition ใช้คำนาม", why:"for consideration = เพื่อพิจารณา", traps:["considerate = มีน้ำใจ (adj), considerably = อย่างมาก (adv)"]},
+ {c:"form", s:"The training session was ___ useful for newly hired employees.", o:["particular","particularly","particularity","particulars"], a:1,
+  clue:"<b>___ useful</b> → ขยาย adj ใช้ adverb", why:"particularly = เป็นพิเศษ", traps:[]},
+ {c:"form", s:"Prices for raw materials have remained ___ over the past year.", o:["stable","stably","stability","stabilize"], a:0,
+  clue:"<b>remain + adj</b> (เหมือน be)", why:"remain stable = คงที่", traps:["กริยาที่ตามด้วย adj: remain, become, seem, stay, look"]},
+ {c:"form", s:"The marketing director made the ___ to expand into online sales.", o:["decide","decision","decisive","decisively"], a:1,
+  clue:"<b>made the ___</b> → หลัง the ใช้คำนาม", why:"make a decision = ตัดสินใจ", traps:[]},
+ {c:"form", s:"We apologize for any ___ delays in processing your order.", o:["expect","unexpected","unexpectedly","expectation"], a:1,
+  clue:"<b>any ___ delays</b> → ก่อนนามใช้ adj", why:"unexpected = ไม่คาดคิด", traps:[]},
+ {c:"form", s:"The conference will provide ___ for professionals to share ideas.", o:["opportunities","opportune","opportunely","opportunism"], a:0,
+  clue:"<b>provide ___ for</b> → กรรมของ provide เป็นคำนาม", why:"opportunities = โอกาส", traps:["opportunism เป็นนามแต่หมายถึงการฉวยโอกาส ความหมายไม่เข้า"]},
+ {c:"form", s:"Ms. Grant spoke ___ about the company's plans for next year.", o:["confident","confidently","confidence","confide"], a:1,
+  clue:"<b>spoke ___</b> → ขยายกริยาใช้ adverb", why:"confidently = อย่างมั่นใจ", traps:[]},
+
+ {c:"vocab", s:"Please ___ the enclosed form and return it by May 1.", o:["complete","consist","participate","proceed"], a:0,
+  clue:"<b>___ the form</b> → กรอกแบบฟอร์ม", why:"complete a form = กรอกแบบฟอร์มให้ครบ", traps:["consist of, participate in, proceed with ต้องมีบุพบท"]},
+ {c:"vocab", s:"The hotel is ___ located near the city's main shopping district.", o:["conveniently","comfortably","considerably","consecutively"], a:0,
+  clue:"<b>conveniently located</b> = ตั้งอยู่ในทำเลสะดวก", why:"collocation ที่ออกบ่อยมากในโฆษณาโรงแรม", traps:[]},
+ {c:"vocab", s:"The company will ___ employees for all travel expenses related to the conference.", o:["reimburse","borrow","afford","owe"], a:0,
+  clue:"<b>___ คน for ค่าใช้จ่าย</b> → คืนเงินที่สำรองจ่ายไป", why:"reimburse = เบิกจ่ายคืน", traps:[]},
+ {c:"vocab", s:"Due to ___ weather, the flight to Seoul was delayed by two hours.", o:["inclement","indifferent","insistent","innocent"], a:0,
+  clue:"<b>inclement weather</b> = อากาศแย่", why:"คำนี้แทบจะใช้คู่กับ weather เท่านั้น", traps:[]},
+ {c:"vocab", s:"The new employee handbook ___ the company's vacation policy.", o:["outlines","attends","proceeds","responds"], a:0,
+  clue:"<b>handbook ___ policy</b> → คู่มืออธิบายนโยบาย", why:"outline = อธิบายโดยสรุป", traps:["respond ต้องมี to, proceed ต้องมี with"]},
+ {c:"vocab", s:"Customers who sign up today will receive a 20 percent ___.", o:["discount","expense","budget","payment"], a:0,
+  clue:"<b>20 percent ___</b> + สมัครวันนี้ → ส่วนลด", why:"discount = ส่วนลด", traps:[]},
+ {c:"vocab", s:"The factory has ___ its production by 15 percent this year.", o:["increased","risen","grown","arisen"], a:0,
+  clue:"<b>has ___ its production</b> → มีกรรม ต้องใช้กริยาที่มีกรรมได้", why:"increase + กรรม = เพิ่ม...", traps:["rise / arise ไม่มีกรรม (production rose) ส่วน grow ในความหมายเพิ่มขึ้นก็ไม่มีกรรม"]},
+ {c:"vocab", s:"Mr. Kato was asked to ___ the new staff members to the rest of the team.", o:["introduce","inform","notify","remind"], a:0,
+  clue:"<b>___ A to B</b> → แนะนำ A ให้ B รู้จัก", why:"introduce A to B", traps:["inform / notify ใช้ + คน + of, remind ใช้ + คน + of / to V"]},
+ {c:"vocab", s:"Please keep this confirmation number for future ___.", o:["reference","purpose","reason","order"], a:0,
+  clue:"<b>for future reference</b> = ไว้อ้างอิงภายหลัง", why:"วลีท้ายอีเมลยืนยันการจอง", traps:[]},
+ {c:"vocab", s:"The store will be closed next week for ___.", o:["renovations","inventions","donations","reservations"], a:0,
+  clue:"<b>closed for ___</b> → ปิดร้านเพื่อปรับปรุง", why:"renovation = การปรับปรุงซ่อมแซม", traps:[]},
+ {c:"vocab", s:"Interested candidates should ___ a résumé and cover letter to the HR department.", o:["submit","apply","register","enroll"], a:0,
+  clue:"<b>___ a résumé</b> มีกรรมตรง → submit", why:"submit = ยื่น ส่ง", traps:["apply ต้องเป็น apply for/to, register / enroll ใช้กับการลงทะเบียน"]},
+ {c:"vocab", s:"The two companies finally reached an ___ after months of negotiation.", o:["agreement","argument","approval","appointment"], a:0,
+  clue:"<b>reach an agreement</b> = บรรลุข้อตกลง", why:"collocation", traps:[]},
+ {c:"vocab", s:"The museum offers free ___ on the first Sunday of every month.", o:["admission","permission","commission","submission"], a:0,
+  clue:"<b>free admission</b> = เข้าชมฟรี", why:"admission = การเข้าชม/ค่าเข้า", traps:["commission = ค่านายหน้า"]},
+ {c:"vocab", s:"The sales department ___ a 10 percent increase in revenue last quarter.", o:["reported","told","spoke","said"], a:0,
+  clue:"<b>___ an increase</b> → กริยาที่มีกรรมเป็นตัวเลข/ผลลัพธ์", why:"report = รายงาน", traps:["tell ต้องมีคนเป็นกรรม, speak ไม่ตามด้วยตัวเลข"]},
+ {c:"vocab", s:"Mr. Grant is ___ for his careful attention to detail.", o:["known","aware","familiar","capable"], a:0,
+  clue:"<b>be known for</b> = เป็นที่รู้จักในเรื่อง", why:"", traps:["aware of, familiar with, capable of"]},
+
+ {c:"tense", s:"The board of directors ___ the budget proposal at last week's meeting.", o:["approved","approves","has approved","will approve"], a:0,
+  clue:"<b>last week</b> → past simple", why:"approved = อนุมัติแล้ว", traps:[]},
+ {c:"tense", s:"All staff ___ to attend the training session tomorrow morning.", o:["are expected","expect","expected","expecting"], a:0,
+  clue:"<b>staff ถูกคาดหวังให้</b> + to V → passive", why:"be expected to = ต้อง (ถูกคาดหวังให้)", traps:[]},
+ {c:"tense", s:"Ms. Rivera ___ in the marketing department for three years before she moved to sales.", o:["had worked","has worked","works","will work"], a:0,
+  clue:"<b>before + past simple (moved)</b> → เหตุการณ์ก่อนหน้านั้นใช้ past perfect", why:"had worked = เคยทำมาก่อน", traps:[]},
+ {c:"tense", s:"The conference room ___ at the moment, so please use Room B.", o:["is being cleaned","cleans","cleaned","has cleaned"], a:0,
+  clue:"<b>at the moment</b> + ห้องถูกทำความสะอาด → present continuous passive", why:"is being cleaned", traps:[]},
+ {c:"tense", s:"As soon as your order ___, we will send you a confirmation email.", o:["is processed","will be processed","processed","processing"], a:0,
+  clue:"<b>As soon as + present</b> (ห้ามใช้ will)", why:"is processed = ถูกดำเนินการ", traps:[]},
+ {c:"tense", s:"By next month, Mr. Hill ___ with the company for 25 years.", o:["will have been","has been","was","is"], a:0,
+  clue:"<b>By next month + ระยะเวลา</b> → future perfect", why:"will have been = จะครบ...", traps:[]},
+
+ {c:"prep", s:"The seminar on digital marketing will begin ___ 9:00 A.M.", o:["at","on","in","for"], a:0,
+  clue:"<b>เวลาเป็นชั่วโมง</b> → at", why:"at 9:00", traps:[]},
+ {c:"prep", s:"Please turn off your mobile phones ___ the performance.", o:["during","while","meanwhile","when"], a:0,
+  clue:"<b>___ + นาม</b> → preposition", why:"during + นาม", traps:["while / when ตามด้วยประโยค, meanwhile เป็น adverb"]},
+ {c:"prep", s:"The company has grown steadily ___ its founding in 1998.", o:["since","for","while","during"], a:0,
+  clue:"<b>has grown + จุดเริ่ม</b> → since", why:"since its founding = ตั้งแต่ก่อตั้ง", traps:[]},
+ {c:"prep", s:"___ the director's approval, the project cannot proceed.", o:["Without","Unless","Except","Otherwise"], a:0,
+  clue:"<b>___ + นาม</b> + ความหมายเงื่อนไข", why:"Without = ถ้าไม่มี", traps:["Unless ตามด้วยประโยค"]},
+ {c:"prep", s:"Office supplies are stored ___ the cabinet next to the printer.", o:["in","into","to","onto"], a:0,
+  clue:"<b>stored ___</b> → ตำแหน่งที่อยู่ (ไม่ใช่ทิศทาง)", why:"in the cabinet = ในตู้", traps:["into / onto ใช้กับการเคลื่อนที่"]},
+
+ {c:"conj", s:"___ you have any questions, please do not hesitate to contact me.", o:["Should","Unless","Although","Because of"], a:0,
+  clue:"<b>Should + ประธาน + V</b> = If (แบบทางการ)", why:"Should you have = If you have", traps:["ท้ายอีเมลธุรกิจเจอประโยคนี้บ่อยมาก"]},
+ {c:"conj", s:"The new printer is not only faster ___ cheaper to operate.", o:["but also","and also","as well","or else"], a:0,
+  clue:"<b>not only ... but also</b>", why:"ไม่เพียงเร็วกว่า แต่ยังถูกกว่า", traps:[]},
+ {c:"conj", s:"Mr. Song will lead the weekly meeting ___ Ms. Park is away on business.", o:["while","during","meanwhile","despite"], a:0,
+  clue:"<b>___ + ประโยค</b>", why:"while = ในขณะที่", traps:["during / despite ตามด้วยนาม"]},
+ {c:"conj", s:"The flight was delayed; ___, we arrived in time for the opening session.", o:["however","although","despite","because"], a:0,
+  clue:"<b>; ___ ,</b> → adverb เชื่อมประโยค", why:"however = อย่างไรก็ตาม", traps:["although ใช้หลัง ; แบบนี้ไม่ได้"]},
+ {c:"conj", s:"Online sales have increased sharply ___ the company redesigned its website.", o:["since","for","during","despite"], a:0,
+  clue:"<b>have increased + ___ + ประโยคอดีต</b> → since", why:"since = ตั้งแต่ (ใช้เป็น conjunction ได้)", traps:[]},
+
+ {c:"pron", s:"Mr. Adams asked his assistant to send the files to ___ by noon.", o:["him","he","his","himself"], a:0,
+  clue:"<b>to ___</b> → หลัง preposition ใช้รูปกรรม", why:"him = คุณ Adams", traps:["himself จะหมายถึงผู้ช่วยส่งให้ตัวเอง"]},
+ {c:"pron", s:"The company ___ products are sold in over 40 countries is based in Osaka.", o:["whose","which","who","that"], a:0,
+  clue:"<b>___ + นาม (products)</b> → whose", why:"บริษัทที่สินค้าของบริษัทขายใน 40 ประเทศ", traps:[]},
+ {c:"pron", s:"Anyone ___ wishes to attend the workshop must register by Friday.", o:["who","whom","whose","which"], a:0,
+  clue:"<b>คน + ___ + กริยา</b> → who เป็นประธาน", why:"", traps:[]},
+
+ {c:"agree", s:"The list of approved vendors ___ updated every month.", o:["is","are","were","have"], a:0,
+  clue:"<b>The list of ...</b> → ประธานคือ list (เอกพจน์)", why:"is updated", traps:["อย่าผันตาม vendors"]},
+ {c:"agree", s:"Both the manager and her assistant ___ attending the conference.", o:["are","is","was","has"], a:0,
+  clue:"<b>Both A and B</b> → พหูพจน์", why:"are attending", traps:[]},
+
+ {c:"comp", s:"This year's trade fair attracted twice as ___ visitors as last year's.", o:["many","much","more","most"], a:0,
+  clue:"<b>as ___ + นามนับได้ + as</b>", why:"as many visitors as", traps:["much ใช้กับนามนับไม่ได้"]},
+ {c:"comp", s:"The more you practice public speaking, the ___ you will become.", o:["more confident","confident","most confident","confidently"], a:0,
+  clue:"<b>The more ..., the ___</b> → ขั้นกว่าทั้งสองฝั่ง", why:"ยิ่ง...ยิ่ง...", traps:[]},
+
+ {c:"ving", s:"Thank you for ___ our customer satisfaction survey.", o:["completing","complete","to complete","completed"], a:0,
+  clue:"<b>for + V-ing</b> (หลัง preposition)", why:"", traps:[]},
+ {c:"ving", s:"The supplier agreed ___ the delivery deadline by one week.", o:["to extend","extending","extend","extended"], a:0,
+  clue:"<b>agree + to V</b>", why:"", traps:[]},
+];
+
 /* ---------- storage (per-viewer, optional) ---------- */
 const store = {
   get(k,d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch{ return d; } },
@@ -658,7 +779,7 @@ let stats = store.get("p5.stats", {});      // stem -> {seen, lastWrong}
 let history = store.get("p5.history", []);  // [{no, score, total, avg, date, src}]
 let gen = store.get("p5.gen", []);          // questions Claude wrote earlier
 
-const BANK = [...Q1, ...Q2, ...Q3];
+const BANK = [...Q1, ...Q2, ...Q3, ...Q4];
 const START = 101, SIZE = 30, TARGET = 20;
 const BASE_QUOTA = {form:8, vocab:7, tense:4, prep:3, conj:3, pron:2, agree:1, comp:1, ving:1};
 const L = ["A","B","C","D"];
@@ -666,16 +787,6 @@ const $ = id => document.getElementById(id);
 
 function pool(){ const seen = new Set(); return [...BANK, ...gen].filter(q => !seen.has(q.s) && seen.add(q.s)); }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; }
-function weight(q){ const s = stats[q.s]; if(!s) return 2; return s.lastWrong ? 3 : 0.5; }
-function wpick(arr, n){
-  const out = [], c = arr.slice();
-  while(out.length < n && c.length){
-    let r = Math.random() * c.reduce((t,q)=>t+weight(q),0), k = 0;
-    for(; k<c.length-1; k++){ r -= weight(c[k]); if(r<=0) break; }
-    out.push(c.splice(k,1)[0]);
-  }
-  return out;
-}
 function shuffleOpts(q){ const idx = shuffle([0,1,2,3]); return {...q, o:idx.map(i=>q.o[i]), a:idx.indexOf(q.a)}; }
 
 // Weak categories from past answers: accuracy below 70% with at least 3 answers
@@ -694,16 +805,37 @@ function quota(){
   return q;
 }
 
+// Order per category: never-seen first, then up to REVIEW questions answered wrong before,
+// then seen-and-correct (oldest first). Questions from the previous round come last.
+const REVIEW = 4;
 function pickRound(extra = []){
-  const all = pool(), chosen = [...extra], used = new Set(extra.map(q=>q.s));
+  const prev = new Set((round?.qs || []).map(q=>q.s));
+  const chosen = [...extra], used = new Set(extra.map(q=>q.s));
   const need = quota();
   extra.forEach(q => { if(need[q.c]) need[q.c]--; });
-  Object.entries(need).forEach(([c,n]) => {
-    if(chosen.length >= SIZE) return;
-    wpick(all.filter(q=>q.c===c && !used.has(q.s)), Math.min(n, SIZE-chosen.length)).forEach(q=>{ chosen.push(q); used.add(q.s); });
-  });
-  if(chosen.length < SIZE) wpick(all.filter(q=>!used.has(q.s)), SIZE-chosen.length).forEach(q=>chosen.push(q));
-  return shuffle(chosen.slice(0,SIZE)).map(shuffleOpts);
+  let reviews = 0;
+  const groups = c => {
+    const qs = pool().filter(q => (!c || q.c===c) && !used.has(q.s));
+    const unseen = [], wrong = [], right = [], recent = [];
+    qs.forEach(q => { const st = stats[q.s];
+      if(prev.has(q.s)) recent.push(q); else if(!st) unseen.push(q); else if(st.lastWrong) wrong.push(q); else right.push(q); });
+    right.sort((x,y)=>(stats[x.s].last||0)-(stats[y.s].last||0));
+    return {unseen:shuffle(unseen), wrong:shuffle(wrong), right, recent:shuffle(recent)};
+  };
+  const take = (c, n) => {
+    const g = groups(c), out = [...g.unseen];
+    const rv = g.wrong.slice(0, Math.max(0, REVIEW - reviews));
+    out.push(...rv, ...g.right, ...g.wrong.slice(rv.length), ...g.recent);
+    out.slice(0, n).forEach(q => { chosen.push(q); used.add(q.s); if(stats[q.s]?.lastWrong) reviews++; });
+  };
+  Object.entries(need).forEach(([c,n]) => take(c, Math.min(n, SIZE - chosen.length)));
+  if(chosen.length < SIZE) take(null, SIZE - chosen.length);
+  return shuffle(chosen.slice(0,SIZE)).map(q => ({...shuffleOpts(q), review: !!stats[q.s]}));
+}
+function unseenCount(){ return pool().filter(q=>!stats[q.s]).length; }
+function poolStatus(){
+  const u = unseenCount();
+  return `คลังข้อสอบมี ${pool().length} ข้อ ยังไม่เคยเจอ ${u} ข้อ` + (u < SIZE ? " · ข้อใหม่ใกล้หมดแล้ว กดให้ Claude ออกข้อสอบใหม่เพื่อเพิ่มคลัง" : "");
 }
 
 let round;
@@ -711,7 +843,7 @@ function newRound(extra = [], src = "bank"){
   round = {no: history.length + 1, src, qs: pickRound(extra), i:0, done:false};
   round.ans = Array(round.qs.length).fill(null);
   round.qTime = Array(round.qs.length).fill(0);
-  saveRound(); $("result").hidden = true; render();
+  saveRound(); $("result").hidden = true; render(); status(poolStatus());
 }
 function saveRound(){ store.set("p5.round", round); }
 
@@ -724,7 +856,7 @@ function render(){
   const blank = done ? `<span class="blank ${pick===q.a?"ok":"bad"}">${q.o[q.a]}</span>` : `<span class="blank">&nbsp;</span>`;
   $("quiz").innerHTML = `
     <div class="qhead"><span class="qno">${START+i}.</span>
-      <span class="tags">${q.ai?'<span class="tag ai">Claude สร้าง</span>':''}<span class="tag ${done?"":"hide"}">${CATS[q.c].th}</span></span></div>
+      <span class="tags">${q.review?'<span class="tag">เคยเจอแล้ว</span>':''}${q.ai?'<span class="tag ai">Claude สร้าง</span>':''}<span class="tag ${done?"":"hide"}">${CATS[q.c].th}</span></span></div>
     <p class="stem">${esc(q.s).replace("___", blank)}</p>
     <div class="opts">${q.o.map((o,j)=>{
       let cls = "opt";
@@ -757,7 +889,7 @@ $("quiz").addEventListener("click", e=>{
   round.qTime[i] = Math.max(1, Math.round((Date.now()-qStart)/1000));
   round.ans[i] = +b.dataset.j;
   const s = stats[q.s] || {seen:0};
-  stats[q.s] = {seen:s.seen+1, lastWrong: round.ans[i]!==q.a};
+  stats[q.s] = {seen:s.seen+1, lastWrong: round.ans[i]!==q.a, last: round.no};
   store.set("p5.stats", stats); saveRound(); render();
 });
 $("grid").addEventListener("click", e=>{ const b = e.target.closest(".cell"); if(!b) return; round.i = +b.dataset.j; render(); });
@@ -797,7 +929,7 @@ function showResult(){
       <div class="cat ${v.r/v.n<0.7?"weak":""}"><span>${CATS[c].th}</span>
       <span class="track"><i style="width:${v.r/v.n*100}%"></i></span><span class="n">${v.r}/${v.n}</span></div>`).join("")}</div>
     ${weak.length?`<h2>เรื่องที่ควรทบทวน</h2><div class="advice">${weak.map(([c])=>`<div><b>${CATS[c].th}</b>${CATS[c].tip}</div>`).join("")}</div>
-      <p class="sub">รอบถัดไปจะสุ่มหมวดเหล่านี้มาให้มากขึ้น และข้อที่ตอบผิดจะมีโอกาสกลับมาอีก</p>`
+      <p class="sub">รอบถัดไปจะสุ่มหมวดเหล่านี้มาให้มากขึ้น และจะมีข้อที่เคยตอบผิดกลับมาให้ทบทวนไม่เกิน 4 ข้อ</p>`
       :`<p class="clue">ทำได้ดีทุกหมวด ลองจับเวลาให้ได้ข้อละไม่เกิน 15 วินาทีดู</p>`}
     ${wrong.length?`<p class="sub">ข้อที่ผิด: ${wrong.map(j=>START+j).join(", ")} กดเลขในกระดาษคำตอบเพื่อดูเฉลยอีกครั้ง</p>`:""}
     <div class="nav"><button class="btn" id="retry-wrong" ${wrong.length?"":"disabled"}>ทำข้อที่ผิดใหม่</button>
@@ -897,7 +1029,7 @@ function finishGen(text, partial){
   if(!got.length){ status("Claude ส่งข้อสอบกลับมาในรูปแบบที่อ่านไม่ได้ ลองกดอีกครั้ง", true); return; }
   gen = [...gen, ...got].slice(-300); store.set("p5.gen", gen);
   newRound(got.slice(0,SIZE), "claude");
-  status(`ได้ข้อใหม่จาก Claude ${got.length} ข้อ${got.length<SIZE?` เติมจากคลังอีก ${SIZE-got.length} ข้อ`:""} ข้อเหล่านี้เก็บเข้าคลังแล้ว คลังตอนนี้มี ${pool().length} ข้อ`);
+  status(`ได้ข้อใหม่จาก Claude ${got.length} ข้อ${got.length<SIZE?` เติมจากคลังอีก ${SIZE-got.length} ข้อ`:""} ข้อเหล่านี้เก็บเข้าคลังแล้ว · ${poolStatus()}`);
 }
 
 /* ---------- timer + boot ---------- */
@@ -913,6 +1045,6 @@ const saved = store.get("p5.round", null);
 if(saved && Array.isArray(saved.qs) && saved.qs.length && !saved.done){ round = saved; render(); }
 else newRound();
 renderHistory();
-status(`คลังข้อสอบมี ${pool().length} ข้อ`);
+status(poolStatus());
 setupClaude();
 </script>
