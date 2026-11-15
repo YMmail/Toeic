@@ -106,6 +106,14 @@ h2{margin:0;font-size:18px}
 .hist th{font-weight:500;color:var(--muted);font-size:13px}
 .hist td.num{font-family:var(--font-mono)}
 .tablebox{overflow-x:auto}
+.notes{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.notes .lbl{font-size:14px;color:var(--muted);margin-right:4px}
+.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:4px 12px;border-radius:999px;cursor:pointer}
+.chip:hover{border-color:var(--sheet)}
+.chip:focus-visible{outline:2px solid var(--sheet);outline-offset:2px}
+.chip[aria-pressed="true"]{border-color:var(--sheet);background:var(--sheet-soft);color:var(--sheet);font-weight:600}
+.rule{border:1px dashed var(--sheet);border-radius:6px;padding:8px 12px;font-size:14px;margin:0}
+.rule b{color:var(--sheet)}
 .tips{margin:0;padding-left:20px;display:grid;gap:4px;font-size:15px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -123,6 +131,7 @@ h2{margin:0;font-size:18px}
     <button class="btn small" id="stop" hidden>หยุด</button>
     <p class="status" id="status"></p>
   </div>
+  <div class="notes" id="notes" role="group" aria-label="ฝึกตามโน้ต"><span class="lbl">ฝึกตามโน้ต:</span></div>
 
   <div class="bar">
     <span id="pos">รอบที่ 1 · ข้อ 101</span>
@@ -770,6 +779,101 @@ const Q4 = [
   clue:"<b>agree + to V</b>", why:"", traps:[]},
 ];
 
+// Rules from the learner's own handwritten notes (numbering kept as in the notes)
+const NOTES = {
+  n1:{no:"1", t:"ประธาน + ___ + กริยา → adv (-ly หรือ always, often, sometimes, occasionally) ขยายกริยา adj หรือ adv"},
+  n2:{no:"2", t:"a / an / the + ___ + in, on, at, of, about, by → คำนาม (-tion, -ty, -ment, -ness)"},
+  n3:{no:"3", t:"V to be + ___ + by (คน/สิ่งของ) → V3/-ed (passive)"},
+  n4:{no:"4", t:"decide, want, need, expect, plan, hope + to V (ไม่ผัน)"},
+  n5:{no:"5", t:"enjoy, avoid, suggest และหลัง in, on, at, about, by → คำนาม หรือ V-ing"},
+  n6:{no:"6", t:"คำเชื่อมคู่: both…and / either…or / neither…nor / not only…but also"},
+  n7:{no:"7", t:"in = เดือน ปี ช่วงเช้า · on = วัน วันที่ สุดสัปดาห์ · at = เวลา ตอนกลางคืน"},
+  n8:{no:"8", t:"คำที่มาคู่กัน: make a decision, provide information, pay attention, take part"},
+  n9:{no:"9", t:"Tense: by the time + will have V3 / had V3 · already, just, yet, for, since + have/has/had V3 · while + was/were + V-ing · if + will / would + V1 / would have + V3"},
+  n10:{no:"10", t:"will, would, can, could, shall, should, may, might, must, have to + V1 (ไม่เติม s, ing, ed)"},
+  adj:{no:"Adj", t:"adj อยู่หน้านาม หรือหลัง V to be · คำลงท้าย -al, -ible, -ous, -ful, -less, -tic, -ish, -ive"},
+};
+const Q5 = [
+ // rule 1
+ {r:"n1",c:"form", s:"Mr. Lee ___ checks his e-mail before the morning meeting.", o:["usual","usually","usualness","more usual"], a:1, clue:"<b>ประธาน + ___ + กริยา (checks)</b> → adv", why:"usually = โดยปกติ", traps:[]},
+ {r:"n1",c:"form", s:"The new manager ___ explained the changes to all staff members.", o:["clear","clearly","clarity","clarify"], a:1, clue:"<b>ประธาน + ___ + explained</b> → adv", why:"clearly = อย่างชัดเจน", traps:["clarify เป็นกริยา ใส่แล้วจะมีกริยาสองตัวติดกัน"]},
+ {r:"n1",c:"form", s:"Our technicians ___ respond to service requests within an hour.", o:["typical","typically","type","typify"], a:1, clue:"<b>ประธาน + ___ + respond</b> → adv", why:"typically = โดยทั่วไป", traps:[]},
+ {r:"n1",c:"form", s:"Ms. Diaz ___ visits the Bangkok branch to review its performance.", o:["occasional","occasionally","occasion","occasioned"], a:1, clue:"<b>ประธาน + ___ + visits</b> → adv บอกความถี่", why:"occasionally = เป็นครั้งคราว", traps:[]},
+ {r:"n1",c:"form", s:"The committee ___ approved the budget for next year.", o:["unanimous","unanimously","unanimity","unanimousness"], a:1, clue:"<b>ประธาน + ___ + approved</b> → adv", why:"unanimously = อย่างเป็นเอกฉันท์", traps:[]},
+ {r:"n1",c:"form", s:"Customers ___ praise the quick service at our downtown store.", o:["frequent","frequently","frequency","frequented"], a:1, clue:"<b>ประธาน + ___ + praise</b> → adv", why:"frequently = บ่อยๆ", traps:["frequent เป็น adj ใช้ขยายนาม เช่น frequent customers"]},
+ // rule 2
+ {r:"n2",c:"form", s:"The ___ of the new accounting software took three weeks.", o:["install","installation","installed","installable"], a:1, clue:"<b>The ___ of</b> → คำนาม", why:"installation = การติดตั้ง", traps:[]},
+ {r:"n2",c:"form", s:"We appreciate your ___ in the annual charity event.", o:["participate","participation","participatory","participated"], a:1, clue:"<b>your ___ in</b> → คำนาม", why:"participation = การเข้าร่วม", traps:[]},
+ {r:"n2",c:"form", s:"The ___ about the schedule change was posted on the company Web site.", o:["announce","announcement","announced","announcing"], a:1, clue:"<b>The ___ about</b> → คำนาม (-ment)", why:"announcement = ประกาศ", traps:[]},
+ {r:"n2",c:"form", s:"The hotel is well known for the ___ of its guest rooms.", o:["clean","cleanly","cleanliness","cleaned"], a:2, clue:"<b>the ___ of</b> → คำนาม (-ness)", why:"cleanliness = ความสะอาด", traps:[]},
+ {r:"n2",c:"form", s:"Please send a ___ of your proposal to the director by Friday.", o:["summarize","summary","summarily","summarized"], a:1, clue:"<b>a ___ of</b> → คำนาม", why:"summary = บทสรุป", traps:["คำนามไม่จำเป็นต้องลงท้าย -tion เสมอ ดูตำแหน่งเป็นหลัก"]},
+ {r:"n2",c:"form", s:"The ___ of the product depends on regular maintenance.", o:["durable","durably","durability","endure"], a:2, clue:"<b>The ___ of</b> → คำนาม (-ty)", why:"durability = ความทนทาน", traps:[]},
+ // rule 3
+ {r:"n3",c:"tense", s:"The annual report was ___ by the finance team last week.", o:["prepare","preparing","prepared","preparation"], a:2, clue:"<b>was ___ by</b> → V3", why:"was prepared by = ถูกจัดทำโดย", traps:[]},
+ {r:"n3",c:"tense", s:"All job applications are carefully ___ by the hiring committee.", o:["review","reviewing","reviewed","reviewer"], a:2, clue:"<b>are (carefully) ___ by</b> → V3 มี adv คั่นได้", why:"are reviewed = ถูกพิจารณา", traps:[]},
+ {r:"n3",c:"tense", s:"The conference room has been ___ by the marketing department for Friday.", o:["reserve","reserving","reserved","reservation"], a:2, clue:"<b>has been ___ by</b> → V3", why:"has been reserved = ถูกจองไว้แล้ว", traps:[]},
+ {r:"n3",c:"tense", s:"The new safety rules must be ___ by all factory workers.", o:["follow","following","followed","follower"], a:2, clue:"<b>must be ___ by</b> → V3", why:"must be followed = ต้องถูกปฏิบัติตาม", traps:[]},
+ {r:"n3",c:"tense", s:"The package was ___ to the wrong address by mistake.", o:["deliver","delivering","delivered","delivery"], a:2, clue:"<b>was ___</b> + พัสดุถูกส่ง → V3 (ไม่มี by ก็เป็น passive ได้)", why:"was delivered = ถูกส่ง", traps:[]},
+ // rule 4
+ {r:"n4",c:"ving", s:"The company plans ___ two new stores in Chiang Mai next year.", o:["open","to open","opening","opened"], a:1, clue:"<b>plan + to V</b>", why:"", traps:[]},
+ {r:"n4",c:"ving", s:"Mr. Wu hopes ___ the project before the end of the month.", o:["finish","to finish","finishing","finished"], a:1, clue:"<b>hope + to V</b>", why:"", traps:[]},
+ {r:"n4",c:"ving", s:"We expect ___ the results of the customer survey by Monday.", o:["receive","to receive","receiving","received"], a:1, clue:"<b>expect + to V</b>", why:"", traps:[]},
+ {r:"n4",c:"ving", s:"The board decided ___ the price of its most popular product.", o:["raise","to raise","raising","raised"], a:1, clue:"<b>decide + to V</b>", why:"", traps:[]},
+ {r:"n4",c:"ving", s:"All new employees need ___ the online training course this week.", o:["complete","to complete","completing","completed"], a:1, clue:"<b>need + to V</b>", why:"", traps:[]},
+ {r:"n4",c:"ving", s:"Ms. Ito wants ___ her team's sales target this quarter.", o:["exceed","to exceed","exceeding","exceeded"], a:1, clue:"<b>want + to V</b>", why:"", traps:[]},
+ // rule 5
+ {r:"n5",c:"ving", s:"Many guests enjoy ___ at the hotel's rooftop restaurant.", o:["dine","to dine","dining","dined"], a:2, clue:"<b>enjoy + V-ing</b>", why:"", traps:[]},
+ {r:"n5",c:"ving", s:"Please avoid ___ the elevators during the fire drill.", o:["use","to use","using","used"], a:2, clue:"<b>avoid + V-ing</b>", why:"", traps:[]},
+ {r:"n5",c:"ving", s:"The consultant suggested ___ the layout of the main office.", o:["change","to change","changing","changed"], a:2, clue:"<b>suggest + V-ing</b>", why:"", traps:[]},
+ {r:"n5",c:"ving", s:"Ms. Grant is interested in ___ the new overseas sales team.", o:["lead","to lead","leading","led"], a:2, clue:"<b>in + V-ing</b> (หลัง preposition)", why:"", traps:[]},
+ {r:"n5",c:"ving", s:"You can save 10 percent by ___ your tickets online.", o:["book","to book","booking","booked"], a:2, clue:"<b>by + V-ing</b>", why:"by booking = โดยการจอง", traps:[]},
+ {r:"n5",c:"ving", s:"Thank you for ___ about our new line of office furniture.", o:["ask","to ask","asking","asked"], a:2, clue:"<b>for + V-ing</b>", why:"", traps:[]},
+ // rule 6
+ {r:"n6",c:"conj", s:"The new smartphone is both lightweight ___ durable.", o:["and","or","nor","but"], a:0, clue:"<b>both … and</b>", why:"", traps:[]},
+ {r:"n6",c:"conj", s:"Applicants can submit their résumés either online ___ by mail.", o:["and","or","nor","but"], a:1, clue:"<b>either … or</b>", why:"", traps:[]},
+ {r:"n6",c:"conj", s:"Neither the manager ___ her assistant was available for the call.", o:["and","or","nor","but"], a:2, clue:"<b>neither … nor</b>", why:"", traps:[]},
+ {r:"n6",c:"conj", s:"The hotel offers not only free Wi-Fi ___ also a complimentary breakfast.", o:["and","or","nor","but"], a:3, clue:"<b>not only … but also</b>", why:"", traps:[]},
+ {r:"n6",c:"conj", s:"___ the sales team and the marketing team will attend the workshop.", o:["Both","Either","Neither","Not only"], a:0, clue:"<b>___ A and B</b> → Both", why:"", traps:["มองหาคำคู่ข้างหลังก่อน (and / or / nor / but also)"]},
+ {r:"n6",c:"conj", s:"___ Mr. Kim nor Ms. Lee has signed the contract yet.", o:["Neither","Either","Both","Not only"], a:0, clue:"<b>___ A nor B</b> → Neither", why:"", traps:[]},
+ // rule 7
+ {r:"n7",c:"prep", s:"The store opens ___ 8:30 A.M. on weekdays.", o:["at","on","in","during"], a:0, clue:"<b>เวลา</b> → at", why:"", traps:[]},
+ {r:"n7",c:"prep", s:"The annual shareholders' meeting will take place ___ March.", o:["in","on","at","for"], a:0, clue:"<b>เดือน</b> → in", why:"", traps:[]},
+ {r:"n7",c:"prep", s:"Our office will be closed ___ Monday, May 5.", o:["in","on","at","for"], a:1, clue:"<b>วัน / วันที่</b> → on", why:"", traps:[]},
+ {r:"n7",c:"prep", s:"The company was founded ___ 2008 by two engineers.", o:["in","on","at","for"], a:0, clue:"<b>ปี</b> → in", why:"", traps:[]},
+ {r:"n7",c:"prep", s:"Please arrive at the airport early ___ the morning of your flight.", o:["in","on","at","by"], a:1, clue:"<b>the morning of + วันที่เจาะจง</b> → on", why:"ปกติ in the morning แต่ถ้าระบุว่าเช้าของวันไหน ให้ใช้ on", traps:["ข้อนี้เป็นกับดัก in the morning vs on the morning of"]},
+ {r:"n7",c:"prep", s:"Most staff members leave the office ___ 6 P.M.", o:["at","on","in","during"], a:0, clue:"<b>เวลา</b> → at", why:"", traps:[]},
+ // rule 8
+ {r:"n8",c:"vocab", s:"The director will ___ a final decision after reviewing all the reports.", o:["make","do","give","put"], a:0, clue:"<b>make a decision</b>", why:"", traps:[]},
+ {r:"n8",c:"vocab", s:"Our Web site ___ detailed information about all of our services.", o:["provides","makes","does","takes"], a:0, clue:"<b>provide information</b>", why:"", traps:[]},
+ {r:"n8",c:"vocab", s:"Please ___ close attention to the safety instructions.", o:["pay","make","do","take"], a:0, clue:"<b>pay attention (to)</b>", why:"", traps:[]},
+ {r:"n8",c:"vocab", s:"Several staff members ___ part in the leadership training program.", o:["took","made","did","had"], a:0, clue:"<b>take part in</b> = เข้าร่วม", why:"", traps:[]},
+ {r:"n8",c:"vocab", s:"Please ___ a reservation at least 24 hours in advance.", o:["make","do","take","have"], a:0, clue:"<b>make a reservation</b>", why:"", traps:[]},
+ {r:"n8",c:"vocab", s:"The company will ___ every effort to reduce waste this year.", o:["make","do","take","give"], a:0, clue:"<b>make an effort</b>", why:"", traps:[]},
+ // rule 9
+ {r:"n9",c:"tense", s:"By the time the guests arrive, the staff ___ the dining hall.", o:["will have decorated","had decorated","decorate","decorated"], a:0, clue:"<b>By the time + present (arrive)</b> → will have V3", why:"", traps:[]},
+ {r:"n9",c:"tense", s:"By the time Ms. Hong joined the company, it ___ three branches.", o:["had opened","will have opened","opens","has opened"], a:0, clue:"<b>By the time + past (joined)</b> → had V3", why:"", traps:[]},
+ {r:"n9",c:"tense", s:"Mr. Davis ___ in Tokyo since 2018.", o:["has lived","lives","lived","will live"], a:0, clue:"<b>since</b> → have/has V3", why:"", traps:[]},
+ {r:"n9",c:"tense", s:"While the technician ___ the printer, the power went out.", o:["was repairing","repaired","repairs","has repaired"], a:0, clue:"<b>While</b> + อดีต → was/were + V-ing", why:"", traps:[]},
+ {r:"n9",c:"tense", s:"If the weather is good tomorrow, the picnic ___ in Central Park.", o:["will be held","was held","would have been held","has been held"], a:0, clue:"<b>If + present</b> → will + V1", why:"", traps:[]},
+ {r:"n9",c:"tense", s:"If we had more staff, we ___ open the store on weekends.", o:["would","will","had","have"], a:0, clue:"<b>If + past (had)</b> → would + V1", why:"สมมติสิ่งที่ไม่จริงในปัจจุบัน", traps:[]},
+ {r:"n9",c:"tense", s:"If Ms. Park had left earlier, she ___ the 8 o'clock train.", o:["would have caught","will catch","would catch","has caught"], a:0, clue:"<b>If + had V3</b> → would have V3", why:"สมมติย้อนอดีต", traps:[]},
+ {r:"n9",c:"tense", s:"The shipment has ___ arrived, so you can pick it up today.", o:["already","yet","since","ago"], a:0, clue:"<b>has ___ V3</b> + ประโยคบอกเล่า → already", why:"", traps:["yet ใช้ในประโยคปฏิเสธ/คำถาม และมักอยู่ท้ายประโยค"]},
+ // rule 10
+ {r:"n10",c:"tense", s:"Visitors must ___ their badges at all times inside the building.", o:["wear","wears","wearing","to wear"], a:0, clue:"<b>must + V1</b>", why:"", traps:[]},
+ {r:"n10",c:"tense", s:"You can ___ the registration form from our Web site.", o:["download","downloads","downloading","downloaded"], a:0, clue:"<b>can + V1</b>", why:"", traps:[]},
+ {r:"n10",c:"tense", s:"Employees should ___ any equipment problems to their supervisor.", o:["report","reports","reporting","reported"], a:0, clue:"<b>should + V1</b>", why:"", traps:[]},
+ {r:"n10",c:"tense", s:"Delivery may ___ a few days longer than usual during the holidays.", o:["take","takes","taking","took"], a:0, clue:"<b>may + V1</b>", why:"", traps:[]},
+ {r:"n10",c:"tense", s:"All staff will have to ___ how to use the new security system.", o:["learn","learns","learning","learned"], a:0, clue:"<b>have to + V1</b>", why:"", traps:[]},
+ // adj
+ {r:"adj",c:"form", s:"The museum has a ___ collection of modern Asian art.", o:["beauty","beautiful","beautifully","beautify"], a:1, clue:"<b>a ___ collection</b> → หน้านามใช้ adj (-ful)", why:"", traps:[]},
+ {r:"adj",c:"form", s:"Working near the machines without a helmet is ___.", o:["danger","dangerous","dangerously","endanger"], a:1, clue:"<b>is ___</b> → หลัง V to be ใช้ adj (-ous)", why:"", traps:[]},
+ {r:"adj",c:"form", s:"The design team came up with a ___ way to display the new products.", o:["create","creative","creatively","creation"], a:1, clue:"<b>a ___ way</b> → adj (-ive)", why:"", traps:[]},
+ {r:"adj",c:"form", s:"Please make sure that all the figures in the report are ___.", o:["accuracy","accurate","accurately","accurateness"], a:1, clue:"<b>are ___</b> → adj", why:"accurate = ถูกต้อง แม่นยำ", traps:[]},
+ {r:"adj",c:"form", s:"The company is looking for ___ ways to reduce its energy costs.", o:["practice","practical","practically","practicality"], a:1, clue:"<b>___ ways</b> → adj (-al)", why:"practical = ใช้ได้จริง", traps:[]},
+ {r:"adj",c:"form", s:"Is it ___ to change my flight to an earlier time?", o:["possibility","possible","possibly","possibilities"], a:1, clue:"<b>Is it ___</b> → หลัง V to be ใช้ adj (-ible)", why:"", traps:[]},
+ {r:"adj",c:"form", s:"We received very ___ feedback from customers about the new menu.", o:["positive","positively","positivity","position"], a:0, clue:"<b>very ___ feedback</b> → หน้านามใช้ adj (-ive)", why:"", traps:[]},
+];
+
 /* ---------- storage (per-viewer, optional) ---------- */
 const store = {
   get(k,d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch{ return d; } },
@@ -779,7 +883,7 @@ let stats = store.get("p5.stats", {});      // stem -> {seen, lastWrong}
 let history = store.get("p5.history", []);  // [{no, score, total, avg, date, src}]
 let gen = store.get("p5.gen", []);          // questions Claude wrote earlier
 
-const BANK = [...Q1, ...Q2, ...Q3, ...Q4];
+const BANK = [...Q1, ...Q2, ...Q3, ...Q4, ...Q5];
 const START = 101, SIZE = 30, TARGET = 20;
 const BASE_QUOTA = {form:8, vocab:7, tense:4, prep:3, conj:3, pron:2, agree:1, comp:1, ving:1};
 const L = ["A","B","C","D"];
@@ -839,8 +943,10 @@ function poolStatus(){
 }
 
 let round;
-function newRound(extra = [], src = "bank"){
-  round = {no: history.length + 1, src, qs: pickRound(extra), i:0, done:false};
+function newRound(extra = [], src = "bank", exact = false){
+  const qs = exact ? shuffle(extra.slice()).map(q => ({...shuffleOpts(q), review: !!stats[q.s]})) : pickRound(extra);
+  round = {no: history.length + 1, src, qs, i:0, done:false};
+  document.querySelectorAll("#notes .chip").forEach(c => c.setAttribute("aria-pressed", "note:"+c.dataset.r === src));
   round.ans = Array(round.qs.length).fill(null);
   round.qTime = Array(round.qs.length).fill(0);
   saveRound(); $("result").hidden = true; render(); status(poolStatus());
@@ -851,7 +957,7 @@ function saveRound(){ store.set("p5.round", round); }
 let qStart = Date.now();
 function render(){
   const i = round.i, q = round.qs[i], pick = round.ans[i], done = pick !== null, n = round.qs.length;
-  $("pos").textContent = `รอบที่ ${round.no} · ข้อ ${START+i}`;
+  $("pos").textContent = `รอบที่ ${round.no}${modeLabel(round.src)} · ข้อ ${START+i}`;
   $("fill").style.width = (round.ans.filter(a=>a!==null).length / n * 100) + "%";
   const blank = done ? `<span class="blank ${pick===q.a?"ok":"bad"}">${q.o[q.a]}</span>` : `<span class="blank">&nbsp;</span>`;
   $("quiz").innerHTML = `
@@ -867,6 +973,7 @@ function render(){
       <div class="verdict ${pick===q.a?"ok":"bad"}">${pick===q.a?"ถูกต้อง":"ยังไม่ถูก คำตอบคือ ("+L[q.a]+") "+esc(q.o[q.a])}
         <small> · ใช้เวลา ${round.qTime[i]} วินาที${round.qTime[i]>TARGET?" (เกินเป้า 20 วิ)":""}</small></div>
       <p class="clue">${q.clue}</p>
+      ${q.r ? `<p class="rule"><b>โน้ตข้อ ${NOTES[q.r].no}</b> · ${NOTES[q.r].t}</p>` : ""}
       <div class="why">${q.why}${q.traps&&q.traps.length?`<ul>${q.traps.map(t=>`<li>${t}</li>`).join("")}</ul>`:""}</div>
       ${q.ai?'<p class="note">ข้อนี้ Claude สร้างขึ้นใหม่ ถ้าเฉลยดูไม่สมเหตุสมผล ให้ถามในแชทได้</p>':''}
     </div>` : ""}`;
@@ -946,7 +1053,7 @@ function renderHistory(){
   $("hist").innerHTML = `<tr><th>รอบ</th><th>วันที่</th><th>คะแนน</th><th>เวลาเฉลี่ย</th><th>ที่มา</th></tr>` +
     history.slice(-10).reverse().map(h=>`<tr><td class="num">${h.no}</td><td class="num">${h.date}</td>
       <td class="num">${h.score}/${h.total} (${Math.round(h.score/h.total*100)}%)</td><td class="num">${h.avg} วิ</td>
-      <td>${h.src==="claude"?"Claude สร้าง":"คลังข้อสอบ"}</td></tr>`).join("");
+      <td>${h.src==="claude"?"Claude สร้าง":h.src.startsWith("note")?modeLabel(h.src).slice(3):"คลังข้อสอบ"}</td></tr>`).join("");
 }
 
 /* ---------- new-round button: confirm when a round is half done ---------- */
@@ -1031,6 +1138,26 @@ function finishGen(text, partial){
   newRound(got.slice(0,SIZE), "claude");
   status(`ได้ข้อใหม่จาก Claude ${got.length} ข้อ${got.length<SIZE?` เติมจากคลังอีก ${SIZE-got.length} ข้อ`:""} ข้อเหล่านี้เก็บเข้าคลังแล้ว · ${poolStatus()}`);
 }
+
+/* ---------- practice by the learner's notes ---------- */
+function modeLabel(src){
+  if(!src || !src.startsWith("note:")) return "";
+  const k = src.slice(5); return k==="all" ? " · ฝึกทุกข้อในโน้ต" : ` · โน้ตข้อ ${NOTES[k].no}`;
+}
+function noteRound(key){
+  const list = Q5.filter(q => key==="all" || q.r===key);
+  const rank = q => !stats[q.s] ? 0 : stats[q.s].lastWrong ? 1 : 2;
+  const pick = shuffle(list.slice()).sort((a,b)=>rank(a)-rank(b)).slice(0, SIZE);
+  newRound(pick, "note:"+key, true);
+  status(`ฝึก${key==="all"?"ทุกข้อในโน้ต":"โน้ตข้อ "+NOTES[key].no} ${pick.length} ข้อ · กด "สุ่มชุดใหม่" เพื่อกลับไปทำแบบข้อสอบจริง`);
+}
+(function(){
+  const box = $("notes");
+  const mk = (k, label) => { const b = document.createElement("button"); b.className="chip"; b.dataset.r=k; b.id="note-"+k; b.textContent=label; b.setAttribute("aria-pressed","false"); box.appendChild(b); };
+  mk("all","ทุกข้อ");
+  Object.entries(NOTES).forEach(([k,v]) => mk(k, v.no==="Adj" ? "Adj" : "ข้อ "+v.no));
+  box.addEventListener("click", e => { const b = e.target.closest(".chip"); if(b) noteRound(b.dataset.r); });
+})();
 
 /* ---------- timer + boot ---------- */
 setInterval(()=>{
