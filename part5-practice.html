@@ -1026,17 +1026,23 @@ function showResult(){
     history = history.slice(-30);
     store.set("p5.history", history); saveRound();
   }
-  const weak = Object.entries(cats).filter(([,v])=>v.r/v.n<0.7);
+  // Note rounds are grouped by the rule in the learner's notes; other rounds by category
+  const byNote = round.src.startsWith("note") && qs.every(q=>q.r);
+  const groups = {};
+  qs.forEach((q,j)=>{ const k = byNote ? q.r : q.c; groups[k]=groups[k]||{r:0,n:0}; groups[k].n++; if(round.ans[j]===q.a) groups[k].r++; });
+  const label = k => byNote ? `โน้ตข้อ ${NOTES[k].no}` : CATS[k].th;
+  const tip = k => byNote ? NOTES[k].t : CATS[k].tip;
+  const weak = Object.entries(groups).filter(([,v])=>v.r/v.n<0.7);
   const wrong = qs.map((q,j)=>j).filter(j=>round.ans[j]!==qs[j].a);
   $("result").innerHTML = `
     <h2>ผลคะแนนรอบที่ ${round.no}</h2>
     <div class="score"><span class="big">${right}/${n}</span>
       <span>เฉลี่ยข้อละ ${avg} วินาที ${avg<=TARGET?"· ทันเวลาข้อสอบจริง":"· ยังช้ากว่าเป้า 20 วินาที"}</span></div>
-    <div class="cats">${Object.entries(cats).sort((a,b)=>b[1].n-a[1].n).map(([c,v])=>`
-      <div class="cat ${v.r/v.n<0.7?"weak":""}"><span>${CATS[c].th}</span>
+    <div class="cats">${Object.entries(groups).sort((a,b)=> byNote ? Object.keys(NOTES).indexOf(a[0])-Object.keys(NOTES).indexOf(b[0]) : b[1].n-a[1].n).map(([c,v])=>`
+      <div class="cat ${v.r/v.n<0.7?"weak":""}"><span>${label(c)}</span>
       <span class="track"><i style="width:${v.r/v.n*100}%"></i></span><span class="n">${v.r}/${v.n}</span></div>`).join("")}</div>
-    ${weak.length?`<h2>เรื่องที่ควรทบทวน</h2><div class="advice">${weak.map(([c])=>`<div><b>${CATS[c].th}</b>${CATS[c].tip}</div>`).join("")}</div>
-      <p class="sub">รอบถัดไปจะสุ่มหมวดเหล่านี้มาให้มากขึ้น และจะมีข้อที่เคยตอบผิดกลับมาให้ทบทวนไม่เกิน 4 ข้อ</p>`
+    ${weak.length?`<h2>เรื่องที่ควรทบทวน</h2><div class="advice">${weak.map(([c])=>`<div><b>${label(c)}</b>${tip(c)}</div>`).join("")}</div>
+      <p class="sub">${byNote ? "กดเลขโน้ตข้อนั้นในแถว \"ฝึกตามโน้ต\" เพื่อฝึกเฉพาะเรื่องนั้นซ้ำ" : "รอบถัดไปจะสุ่มหมวดเหล่านี้มาให้มากขึ้น และจะมีข้อที่เคยตอบผิดกลับมาให้ทบทวนไม่เกิน 4 ข้อ"}</p>`
       :`<p class="clue">ทำได้ดีทุกหมวด ลองจับเวลาให้ได้ข้อละไม่เกิน 15 วินาทีดู</p>`}
     ${wrong.length?`<p class="sub">ข้อที่ผิด: ${wrong.map(j=>START+j).join(", ")} กดเลขในกระดาษคำตอบเพื่อดูเฉลยอีกครั้ง</p>`:""}
     <div class="nav"><button class="btn" id="retry-wrong" ${wrong.length?"":"disabled"}>ทำข้อที่ผิดใหม่</button>
